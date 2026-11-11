@@ -4,9 +4,9 @@
     <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/title" android:textSize="26sp" android:textStyle="bold" android:textColor="#8B1631" />
     <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/subtitle" android:textSize="14sp" android:paddingBottom="12dp" />
     <TextView android:id="@+id/service_mode" android:layout_width="match_parent" android:layout_height="wrap_content" android:textSize="12sp" android:textColor="#8B1631" />
-    <EditText android:id="@+id/name" android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="@string/bank_hint" android:importantForAutofill="no" android:inputType="text" android:maxLines="1" />
-    <EditText android:id="@+id/department" android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="@string/department_hint" android:importantForAutofill="no" android:inputType="text" android:maxLines="1" />
-    <EditText android:id="@+id/city" android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="@string/city_hint" android:importantForAutofill="no" android:inputType="text" android:maxLines="1" />
+    <Spinner android:id="@+id/name" android:layout_width="match_parent" android:layout_height="48dp" android:contentDescription="@string/bank_hint" android:spinnerMode="dialog" android:prompt="@string/bank_hint" />
+    <Spinner android:id="@+id/department" android:layout_width="match_parent" android:layout_height="48dp" android:contentDescription="@string/department_hint" android:spinnerMode="dialog" android:prompt="@string/department_hint" />
+    <Spinner android:id="@+id/city" android:layout_width="match_parent" android:layout_height="48dp" android:contentDescription="@string/city_hint" android:spinnerMode="dialog" android:prompt="@string/city_hint" />
     <Button android:id="@+id/search" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/search" android:backgroundTint="#8B1631" android:textColor="#FFFFFF" />
     <ProgressBar android:id="@+id/progress" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_gravity="center" android:visibility="gone" />
     <TextView android:id="@+id/status" android:layout_width="match_parent" android:layout_height="wrap_content" android:paddingTop="8dp" android:paddingBottom="8dp" android:accessibilityLiveRegion="polite" />

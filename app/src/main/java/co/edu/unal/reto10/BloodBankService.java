@@ -21,7 +21,7 @@ public final class BloodBankService {
 
     public static String query(String name, String department, String city) {
         List<String> filters = new ArrayList<>();
-        if (!name.trim().isEmpty()) filters.add("contains(upper(bancodesangre), upper(" + literal(name) + "))");
+        if (!name.trim().isEmpty()) filters.add("upper(bancodesangre) = upper(" + literal(name) + ")");
         if (!department.trim().isEmpty()) filters.add("upper(departamento) = upper(" + literal(department) + ")");
         if (!city.trim().isEmpty()) filters.add("upper(ciudad) = upper(" + literal(city) + ")");
         return "SELECT *" + (filters.isEmpty() ? "" : " WHERE " + String.join(" AND ", filters))

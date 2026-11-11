@@ -6,6 +6,8 @@ Android Studio, SDK de compilación 36, Android Gradle Plugin 9.1.0 y Gradle wra
 
 ## Resultados comprobados
 
+Actualización de filtros: los tres campos ahora usan listas obtenidas del servicio. La instrumentación verificó su carga y seleccionó un banco desde la interfaz, comprobando que todos los resultados corresponden al nombre elegido. Compilación y Lint repetidos correctamente tras la mejora.
+
 | Verificación | Resultado |
 | --- | --- |
 | `assembleDebug assembleDebugAndroidTest lintDebug --offline --no-daemon` | Correcto |
@@ -25,10 +27,14 @@ Android Studio, SDK de compilación 36, Android Gradle Plugin 9.1.0 y Gradle wra
 Salida del runner:
 
 ```text
-OK: filtros, escape de literales, actividad y API real. Total=85; filtrados=4; inexistentes=0
+OK: tres listas reales, selección de banco en interfaz, filtros y API real. Total=85; filtrados=4; inexistentes=0
 ```
 
 ## Evidencia visual
+
+![Tres filtros por selección de lista](docs/evidencias/03-selectores.png)
+
+Las capturas siguientes corresponden a la primera versión y documentan la presentación del listado y del detalle.
 
 ![Listado real en Small_Phone](docs/evidencias/01-listado.png)
 

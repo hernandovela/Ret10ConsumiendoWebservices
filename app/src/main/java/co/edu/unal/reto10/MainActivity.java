@@ -15,7 +15,8 @@ public class MainActivity extends Activity {
     private Button search;
     private View progress;
     private ListView list;
-    private EditText name, department, city;
+    private Spinner name, department, city;
+    private boolean filtersReady;
 
     @Override public void onCreate(Bundle state) {
         super.onCreate(state);
@@ -37,13 +38,64 @@ public class MainActivity extends Activity {
         progress = findViewById(R.id.progress); list = findViewById(R.id.list);
         ((TextView) findViewById(R.id.service_mode)).setText(BloodBankService.usesSoda3() ? R.string.soda3_mode : R.string.soda2_mode);
         status.setText(R.string.instructions);
-        search.setOnClickListener(v -> load());
+        search.setOnClickListener(v -> { if (filtersReady) load(); else loadOptions(); });
         list.setOnItemClickListener((parent, view, position, id) -> showDetail(banks.get(position)));
+        loadOptions();
+    }
+
+    /** Las opciones se obtienen del servicio, no de listas inventadas o fijas. */
+    private void loadOptions() {
+        search.setEnabled(false); setFiltersEnabled(false);
+        progress.setVisibility(View.VISIBLE); status.setText(R.string.loading_options);
+        executor.execute(() -> {
+            try {
+                JSONArray catalog = new BloodBankService().fetch(BloodBankService.query("", "", ""));
+                runOnUiThread(() -> {
+                    if (isDestroyed()) return;
+                    populate(name, catalog, "bancodesangre", R.string.all_banks);
+                    populate(department, catalog, "departamento", R.string.all_departments);
+                    populate(city, catalog, "ciudad", R.string.all_cities);
+                    filtersReady = true;
+                    search.setText(R.string.search);
+                    finishLoad(getString(R.string.instructions));
+                });
+            } catch (Exception error) {
+                runOnUiThread(() -> {
+                    if (isDestroyed()) return;
+                    search.setText(R.string.retry_options);
+                    finishLoad(getString(R.string.options_error));
+                });
+            }
+        });
+    }
+
+    private void populate(Spinner spinner, JSONArray catalog, String field, int allLabel) {
+        SortedSet<String> unique = new TreeSet<>();
+        for (int i = 0; i < catalog.length(); i++) {
+            JSONObject bank = catalog.optJSONObject(i);
+            if (bank != null && !bank.isNull(field)) {
+                String option = bank.optString(field).trim();
+                if (!option.isEmpty()) unique.add(option);
+            }
+        }
+        List<String> options = new ArrayList<>();
+        options.add(getString(allLabel)); options.addAll(unique);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, R.layout.spinner_selected, options);
+        adapter.setDropDownViewResource(R.layout.spinner_option);
+        spinner.setAdapter(adapter);
+    }
+
+    private String selected(Spinner spinner) {
+        return spinner.getSelectedItemPosition() <= 0 ? "" : spinner.getSelectedItem().toString();
+    }
+
+    private void setFiltersEnabled(boolean enabled) {
+        name.setEnabled(enabled); department.setEnabled(enabled); city.setEnabled(enabled);
     }
 
     private void load() {
-        final String query = BloodBankService.query(name.getText().toString(), department.getText().toString(), city.getText().toString());
-        search.setEnabled(false); progress.setVisibility(View.VISIBLE); status.setText(R.string.loading);
+        final String query = BloodBankService.query(selected(name), selected(department), selected(city));
+        search.setEnabled(false); setFiltersEnabled(false); progress.setVisibility(View.VISIBLE); status.setText(R.string.loading);
         banks.clear(); list.setAdapter(null);
         executor.execute(() -> {
             try {
@@ -75,7 +127,7 @@ public class MainActivity extends Activity {
     }
 
     private void finishLoad(String message) {
-        search.setEnabled(true); progress.setVisibility(View.GONE); status.setText(message);
+        search.setEnabled(true); setFiltersEnabled(filtersReady); progress.setVisibility(View.GONE); status.setText(message);
     }
 
     private String value(JSONObject bank, String field) {

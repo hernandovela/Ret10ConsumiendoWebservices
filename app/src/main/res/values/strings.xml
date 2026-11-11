@@ -8,7 +8,13 @@
     <string name="city_hint">Ciudad (opcional)</string>
     <string name="search">Consultar servicio</string>
     <string name="footer">Aplicación educativa. Fuente: datos.gov.co · kwki-6kd6. Los registros no indican disponibilidad de sangre.</string>
-    <string name="instructions">Ingresa filtros opcionales y pulsa Consultar servicio. Departamento y ciudad requieren el nombre completo.</string>
+    <string name="instructions">Selecciona banco, departamento o ciudad y pulsa Consultar servicio. Usa Todos para omitir un filtro.</string>
+    <string name="all_banks">Todos los bancos</string>
+    <string name="all_departments">Todos los departamentos</string>
+    <string name="all_cities">Todas las ciudades</string>
+    <string name="loading_options">Cargando listas desde datos.gov.co…</string>
+    <string name="retry_options">Reintentar cargar listas</string>
+    <string name="options_error">No fue posible cargar las listas. Revisa la conexión e intenta nuevamente.</string>
     <string name="loading">Consultando datos.gov.co…</string>
     <string name="empty">Sin resultados. Revisa los filtros.</string>
     <plurals name="results">

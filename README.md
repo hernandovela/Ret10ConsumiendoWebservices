@@ -7,7 +7,7 @@ Proyecto educativo Android en Java y XML, desarrollado para estudiar el consumo 
 | Requisito | Implementación |
 | --- | --- |
 | Consumir un servicio del catálogo colombiano | SODA3 mediante POST con token; SODA2 público mediante GET sin token, conjunto `kwki-6kd6` |
-| Enviar parámetros desde la interfaz | Nombre parcial, departamento y ciudad; cláusulas SoQL enviadas al servidor |
+| Enviar parámetros desde la interfaz | Selección de banco, departamento y ciudad mediante listas; cláusulas SoQL enviadas al servidor |
 | Presentar la respuesta | Listado y detalle de cada banco |
 | Procesar con objetos JSON del SDK | `JSONObject` para solicitud/registros y `JSONArray` para respuesta |
 
@@ -37,7 +37,9 @@ Documentación para registrar tokens: https://dev.socrata.com/docs/app-tokens.ht
 
 La alternativa SODA2 fue autorizada por el solicitante después de comprobar que SODA3 responde `403 authentication_required` sin token. La interfaz identifica la versión utilizada. No se cambia a SODA2 ante un token inválido: se informa el rechazo para que el error de configuración sea visible. La app funciona con datos reales sin registrar una cuenta.
 
-Nombre admite coincidencia parcial. Departamento y ciudad usan igualdad sin distinguir mayúsculas; los acentos deben coincidir con la fuente. Los apóstrofes se escapan como literales SoQL. Los campos y el orden de consulta son fijos, no se acepta SQL arbitrario desde la interfaz.
+Los tres campos son listas de selección. Al iniciar, la app consulta el catálogo y construye opciones ordenadas y sin duplicados para bancos, departamentos y ciudades. Cada lista incluye una opción Todos para omitir ese filtro. Las listas son independientes; una combinación sin coincidencias muestra el estado sin resultados. Si falla la carga inicial, el botón permite reintentar.
+
+Los valores seleccionados se envían al servidor con igualdad sin distinguir mayúsculas. Los apóstrofes se escapan como literales SoQL. Los campos y el orden de consulta son fijos, no se acepta SQL arbitrario desde la interfaz. La carga de opciones tiene el mismo límite documentado de 1000 registros del catálogo.
 
 Ejemplo del cuerpo de consulta SODA3 (el token se envía en la cabecera `X-App-Token`):
 
@@ -57,7 +59,7 @@ La consulta limita la página a 1000 filas; la interfaz lo informa si se alcanza
 
 - Consultar sin filtros y abrir un detalle.
 - Filtrar por departamento y ciudad con valores existentes y contrastar con el catálogo.
-- Buscar una cadena inexistente y comprobar el estado sin resultados.
+- Seleccionar un banco y un departamento incompatibles y comprobar el estado sin resultados.
 - Desactivar Internet y verificar el mensaje de error y la posibilidad de reintentar.
 - Compilar sin token y verificar el indicador de SODA2 público y la consulta real.
 - Usar un token inválido y comprobar el rechazo del servicio.
@@ -74,7 +76,7 @@ adb install -r app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk
 adb shell am instrument -w co.edu.unal.reto10.test/co.edu.unal.reto10.EducationalTestRunner
 ```
 
-El runner usa `Instrumentation` del SDK y comprueba filtros, escape de apóstrofes, inicio de la actividad y consultas reales con/sin resultados. Requiere Internet y acceso al servicio. El modo SODA3 requiere configurar el token antes de compilar.
+El runner usa `Instrumentation` del SDK y comprueba la carga de las tres listas, selección de un banco y sus resultados en la interfaz, filtros, escape de apóstrofes y consultas reales con/sin resultados. Requiere Internet y acceso al servicio. El modo SODA3 requiere configurar el token antes de compilar.
 
 ## Fuentes
 
