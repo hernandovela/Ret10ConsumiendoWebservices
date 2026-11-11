@@ -12,10 +12,14 @@ public class MainActivity extends Activity {
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
     private final List<JSONObject> banks = new ArrayList<>();
     private TextView status;
-    private Button search;
+    private Button search, clear;
     private View progress;
     private ListView list;
-    private Spinner name, department, city;
+    private AutoCompleteTextView name;
+    private Spinner department, city;
+    private View chooseBank;
+    private JSONArray catalog = new JSONArray();
+    private String lastDepartment = "", lastCity = "";
     private boolean filtersReady;
 
     @Override public void onCreate(Bundle state) {
@@ -35,11 +39,39 @@ public class MainActivity extends Activity {
         });
         name = findViewById(R.id.name); department = findViewById(R.id.department); city = findViewById(R.id.city);
         status = findViewById(R.id.status); search = findViewById(R.id.search);
+        clear = findViewById(R.id.clear); chooseBank = findViewById(R.id.choose_bank);
         progress = findViewById(R.id.progress); list = findViewById(R.id.list);
-        ((TextView) findViewById(R.id.service_mode)).setText(BloodBankService.usesSoda3() ? R.string.soda3_mode : R.string.soda2_mode);
+        ((TextView) findViewById(R.id.service_mode)).setText(getString(R.string.version_loading, BuildConfig.VERSION_NAME));
         status.setText(R.string.instructions);
         search.setOnClickListener(v -> { if (filtersReady) load(); else loadOptions(); });
         list.setOnItemClickListener((parent, view, position, id) -> showDetail(banks.get(position)));
+        name.setOnClickListener(v -> name.showDropDown());
+        chooseBank.setOnClickListener(v -> { name.requestFocus(); name.showDropDown(); });
+        name.setOnEditorActionListener((view, action, event) -> {
+            if (action == android.view.inputmethod.EditorInfo.IME_ACTION_DONE && filtersReady && search.isEnabled()) {
+                load(); return true;
+            }
+            return false;
+        });
+        clear.setOnClickListener(v -> clearFilters());
+        department.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            public void onNothingSelected(AdapterView<?> parent) { }
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                String current = selected(department);
+                if (!filtersReady || current.equals(lastDepartment)) return;
+                lastDepartment = current; lastCity = "";
+                populate(city, matchingCatalog(false), "ciudad", R.string.all_cities);
+                name.setText("", false); updateBankOptions(); clearResults();
+            }
+        });
+        city.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            public void onNothingSelected(AdapterView<?> parent) { }
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                String current = selected(city);
+                if (!filtersReady || current.equals(lastCity)) return;
+                lastCity = current; name.setText("", false); updateBankOptions(); clearResults();
+            }
+        });
         loadOptions();
     }
 
@@ -49,12 +81,21 @@ public class MainActivity extends Activity {
         progress.setVisibility(View.VISIBLE); status.setText(R.string.loading_options);
         executor.execute(() -> {
             try {
-                JSONArray catalog = new BloodBankService().fetch(BloodBankService.query("", "", ""));
+                BloodBankService service = new BloodBankService();
+                JSONArray data = service.fetch(BloodBankService.query("", "", ""));
+                long updatedAt;
+                try { updatedAt = service.fetchUpdatedAt(); } catch (Exception unavailable) { updatedAt = 0; }
+                final long sourceDate = updatedAt;
                 runOnUiThread(() -> {
                     if (isDestroyed()) return;
-                    populate(name, catalog, "bancodesangre", R.string.all_banks);
+                    catalog = data;
                     populate(department, catalog, "departamento", R.string.all_departments);
                     populate(city, catalog, "ciudad", R.string.all_cities);
+                    updateBankOptions();
+                    String date = sourceDate > 0 ? java.time.Instant.ofEpochSecond(sourceDate)
+                            .atZone(java.time.ZoneId.of("America/Bogota"))
+                            .format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy", new Locale("es", "CO"))) : getString(R.string.date_unavailable);
+                    ((TextView) findViewById(R.id.service_mode)).setText(getString(R.string.version_data, BuildConfig.VERSION_NAME, date));
                     filtersReady = true;
                     search.setText(R.string.search);
                     finishLoad(getString(R.string.instructions));
@@ -63,10 +104,47 @@ public class MainActivity extends Activity {
                 runOnUiThread(() -> {
                     if (isDestroyed()) return;
                     search.setText(R.string.retry_options);
+                    ((TextView) findViewById(R.id.service_mode)).setText(getString(R.string.version_data, BuildConfig.VERSION_NAME, getString(R.string.date_unavailable)));
                     finishLoad(getString(R.string.options_error));
                 });
             }
         });
+    }
+
+    private JSONArray matchingCatalog(boolean includeCity) {
+        JSONArray matches = new JSONArray();
+        String dep = selected(department), town = includeCity ? selected(city) : "";
+        for (int i = 0; i < catalog.length(); i++) {
+            JSONObject bank = catalog.optJSONObject(i);
+            if (bank != null && (dep.isEmpty() || dep.equals(bank.optString("departamento")))
+                    && (town.isEmpty() || town.equals(bank.optString("ciudad")))) matches.put(bank);
+        }
+        return matches;
+    }
+
+    private void updateBankOptions() {
+        SortedSet<String> options = new TreeSet<>();
+        JSONArray matches = matchingCatalog(true);
+        for (int i = 0; i < matches.length(); i++) {
+            String bank = matches.optJSONObject(i).optString("bancodesangre").trim();
+            if (!bank.isEmpty()) options.add(bank);
+        }
+        name.setAdapter(new ArrayAdapter<>(this, R.layout.spinner_option, new ArrayList<>(options)));
+    }
+
+    private void clearResults() {
+        banks.clear(); list.setAdapter(null); status.setText(R.string.instructions);
+    }
+
+    private void clearFilters() {
+        lastDepartment = ""; lastCity = "";
+        department.setSelection(0);
+        populate(city, catalog, "ciudad", R.string.all_cities);
+        name.setText("", false); name.dismissDropDown(); updateBankOptions(); clearResults();
+        name.clearFocus();
+        android.view.inputmethod.InputMethodManager keyboard = (android.view.inputmethod.InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+        keyboard.hideSoftInputFromWindow(name.getWindowToken(), 0);
+        status.setText(R.string.filters_cleared);
     }
 
     private void populate(Spinner spinner, JSONArray catalog, String field, int allLabel) {
@@ -91,10 +169,13 @@ public class MainActivity extends Activity {
 
     private void setFiltersEnabled(boolean enabled) {
         name.setEnabled(enabled); department.setEnabled(enabled); city.setEnabled(enabled);
+        clear.setEnabled(enabled); chooseBank.setEnabled(enabled);
     }
 
     private void load() {
-        final String query = BloodBankService.query(selected(name), selected(department), selected(city));
+        final String query = BloodBankService.query(name.getText().toString(), selected(department), selected(city));
+        name.dismissDropDown(); name.clearFocus();
+        ((android.view.inputmethod.InputMethodManager) getSystemService(INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(name.getWindowToken(), 0);
         search.setEnabled(false); setFiltersEnabled(false); progress.setVisibility(View.VISIBLE); status.setText(R.string.loading);
         banks.clear(); list.setAdapter(null);
         executor.execute(() -> {

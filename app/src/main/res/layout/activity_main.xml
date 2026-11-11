@@ -1,13 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/root" android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="vertical" android:padding="20dp">
-    <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/title" android:textSize="26sp" android:textStyle="bold" android:textColor="#8B1631" />
-    <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/subtitle" android:textSize="14sp" android:paddingBottom="12dp" />
-    <TextView android:id="@+id/service_mode" android:layout_width="match_parent" android:layout_height="wrap_content" android:textSize="12sp" android:textColor="#8B1631" />
-    <Spinner android:id="@+id/name" android:layout_width="match_parent" android:layout_height="48dp" android:contentDescription="@string/bank_hint" android:spinnerMode="dialog" android:prompt="@string/bank_hint" />
+    <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/title" android:textSize="24sp" android:textStyle="bold" android:textColor="#8B1631" />
+    <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/subtitle" android:textSize="13sp" android:paddingBottom="4dp" />
+    <TextView android:id="@+id/service_mode" android:layout_width="match_parent" android:layout_height="wrap_content" android:textSize="12sp" android:textColor="#555555" android:paddingBottom="8dp" />
+    <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/bank_hint" android:textStyle="bold" android:textSize="12sp" />
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal">
+        <AutoCompleteTextView android:id="@+id/name" android:layout_width="0dp" android:layout_height="48dp" android:layout_weight="1" android:hint="@string/bank_search_hint" android:inputType="textCapCharacters" android:importantForAutofill="no" android:singleLine="true" android:completionThreshold="1" android:textSize="15sp" android:imeOptions="actionDone" />
+        <ImageButton android:id="@+id/choose_bank" android:layout_width="48dp" android:layout_height="48dp" android:src="@android:drawable/arrow_down_float" android:contentDescription="@string/show_banks" android:background="?android:attr/selectableItemBackgroundBorderless" />
+    </LinearLayout>
+    <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/department_hint" android:labelFor="@id/department" android:textSize="12sp" android:textStyle="bold" />
     <Spinner android:id="@+id/department" android:layout_width="match_parent" android:layout_height="48dp" android:contentDescription="@string/department_hint" android:spinnerMode="dialog" android:prompt="@string/department_hint" />
+    <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/city_hint" android:labelFor="@id/city" android:textSize="12sp" android:textStyle="bold" />
     <Spinner android:id="@+id/city" android:layout_width="match_parent" android:layout_height="48dp" android:contentDescription="@string/city_hint" android:spinnerMode="dialog" android:prompt="@string/city_hint" />
-    <Button android:id="@+id/search" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/search" android:backgroundTint="#8B1631" android:textColor="#FFFFFF" />
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal">
+        <Button android:id="@+id/clear" android:layout_width="wrap_content" android:layout_height="48dp" android:text="@string/clear" android:textColor="#8B1631" style="?android:attr/borderlessButtonStyle" />
+        <!-- La acción principal se resalta con relleno; Limpiar es una acción secundaria de texto. -->
+        <Button android:id="@+id/search" tools:ignore="ButtonStyle" android:layout_width="0dp" android:layout_weight="1" android:layout_height="48dp" android:text="@string/search" android:backgroundTint="#8B1631" android:textColor="#FFFFFF" />
+    </LinearLayout>
     <ProgressBar android:id="@+id/progress" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_gravity="center" android:visibility="gone" />
     <TextView android:id="@+id/status" android:layout_width="match_parent" android:layout_height="wrap_content" android:paddingTop="8dp" android:paddingBottom="8dp" android:accessibilityLiveRegion="polite" />
     <ListView android:id="@+id/list" android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" android:dividerHeight="8dp" />

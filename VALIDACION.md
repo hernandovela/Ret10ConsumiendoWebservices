@@ -2,11 +2,11 @@
 
 ## Entorno
 
-Android Studio, SDK de compilación 36, Android Gradle Plugin 9.1.0 y Gradle wrapper 9.5.0. Emulador `Small_Phone`, dispositivo ADB `emulator-5554`. Aplicación `co.edu.unal.reto10`, versión debug 1.0.
+Android Studio, SDK de compilación 36, Android Gradle Plugin 9.1.0 y Gradle wrapper 9.5.0. Emulador `Small_Phone`, dispositivo ADB `emulator-5554`. Aplicación `co.edu.unal.reto10`, versión debug 1.1.
 
 ## Resultados comprobados
 
-Actualización de filtros: los tres campos ahora usan listas obtenidas del servicio. La instrumentación verificó su carga y seleccionó un banco desde la interfaz, comprobando que todos los resultados corresponden al nombre elegido. Compilación y Lint repetidos correctamente tras la mejora.
+Actualización 1.1: nombre editable con sugerencias del catálogo, botón Limpiar, ciudades y bancos según ubicación y fecha oficial de la fuente. Instrumentación correcta para entrada de nombre completo y parcial, limpieza de campos/resultados, ciudades dependientes y fecha visible. La selección táctil de ASUNCIÓN LTDA desde las sugerencias fue verificada visualmente. `rowsUpdatedAt=1794336785`, correspondiente al 10/11/2026 en America/Bogota.
 
 | Verificación | Resultado |
 | --- | --- |
@@ -27,12 +27,14 @@ Actualización de filtros: los tres campos ahora usan listas obtenidas del servi
 Salida del runner:
 
 ```text
-OK: tres listas reales, selección de banco en interfaz, filtros y API real. Total=85; filtrados=4; inexistentes=0
+OK: selección y texto, limpiar, ciudades dependientes, fecha de fuente y API real. Total=85; filtrados=4; inexistentes=0
 ```
 
 ## Evidencia visual
 
-![Tres filtros por selección de lista](docs/evidencias/03-selectores.png)
+![Formulario versión 1.1 con Limpiar y fecha de datos](docs/evidencias/04-experiencia-v1.1.png)
+
+![Tres filtros de la versión anterior](docs/evidencias/03-selectores.png)
 
 Las capturas siguientes corresponden a la primera versión y documentan la presentación del listado y del detalle.
 

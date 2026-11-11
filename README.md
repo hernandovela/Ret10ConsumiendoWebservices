@@ -35,11 +35,17 @@ Documentación para registrar tokens: https://dev.socrata.com/docs/app-tokens.ht
 
 `MainActivity` recoge filtros y construye SoQL mediante `BloodBankService.query`. Un `ExecutorService` ejecuta la petición fuera del hilo de interfaz. Con token, el servicio serializa un `JSONObject` y envía POST al endpoint SODA3 solicitado. Sin token, envía GET con `$query` codificado a SODA2 del mismo conjunto. Ambos caminos procesan el arreglo con `JSONArray` y cada registro con `JSONObject`. La actividad muestra el resultado en el hilo principal. Cada registro abre un diálogo desplazable con el detalle.
 
-La alternativa SODA2 fue autorizada por el solicitante después de comprobar que SODA3 responde `403 authentication_required` sin token. La interfaz identifica la versión utilizada. No se cambia a SODA2 ante un token inválido: se informa el rechazo para que el error de configuración sea visible. La app funciona con datos reales sin registrar una cuenta.
+La alternativa SODA2 fue autorizada por el solicitante después de comprobar que SODA3 responde `403 authentication_required` sin token. No se cambia a SODA2 ante un token inválido: se informa el rechazo para que el error de configuración sea visible. La app funciona con datos reales sin registrar una cuenta.
 
-Los tres campos son listas de selección. Al iniciar, la app consulta el catálogo y construye opciones ordenadas y sin duplicados para bancos, departamentos y ciudades. Cada lista incluye una opción Todos para omitir ese filtro. Las listas son independientes; una combinación sin coincidencias muestra el estado sin resultados. Si falla la carga inicial, el botón permite reintentar.
+El nombre del banco admite escritura parcial y selección de sugerencias con `AutoCompleteTextView`. La flecha abre la lista sin exigir escribir. Departamento y ciudad usan listas de selección con una opción Todos. Al iniciar, la app obtiene las opciones reales del catálogo, ordenadas y sin duplicados. Las ciudades y sugerencias de bancos dependen de la ubicación elegida. Cambiar el departamento restablece ciudad y nombre; cambiar la ciudad restablece el nombre, evitando conservar selecciones incompatibles.
 
-Los valores seleccionados se envían al servidor con igualdad sin distinguir mayúsculas. Los apóstrofes se escapan como literales SoQL. Los campos y el orden de consulta son fijos, no se acepta SQL arbitrario desde la interfaz. La carga de opciones tiene el mismo límite documentado de 1000 registros del catálogo.
+El botón Limpiar vacía el nombre, restablece las ubicaciones, retira resultados anteriores y oculta el teclado. Buscar bancos o la acción Listo del teclado envían la consulta al servicio. Si falla la carga inicial, el botón permite reintentar.
+
+El nombre usa coincidencia parcial y la ubicación usa igualdad sin distinguir mayúsculas. Los apóstrofes se escapan como literales SoQL. Los campos y el orden de consulta son fijos, no se acepta SQL arbitrario desde la interfaz. La carga de opciones tiene el mismo límite documentado de 1000 registros del catálogo.
+
+### Versión y fecha de los datos
+
+La versión de la aplicación es **1.1** (`versionCode=2`). La fecha que aparece junto a ella se obtiene en cada inicio del campo oficial `rowsUpdatedAt` del endpoint de metadatos, convirtiendo los segundos Unix a la zona `America/Bogota`. El 11/11/2026 la fuente reportó actualización de filas el **10/11/2026**. No se usa la fecha de instalación ni la fecha de cambios del código como fecha de los datos. Si los metadatos no están disponibles, se muestra fecha no disponible y la búsqueda sigue habilitada.
 
 Ejemplo del cuerpo de consulta SODA3 (el token se envía en la cabecera `X-App-Token`):
 
@@ -59,7 +65,9 @@ La consulta limita la página a 1000 filas; la interfaz lo informa si se alcanza
 
 - Consultar sin filtros y abrir un detalle.
 - Filtrar por departamento y ciudad con valores existentes y contrastar con el catálogo.
-- Seleccionar un banco y un departamento incompatibles y comprobar el estado sin resultados.
+- Escribir un nombre inexistente y comprobar el estado sin resultados.
+- Cambiar de departamento y comprobar que solo se ofrezcan ciudades y bancos de ese departamento.
+- Pulsar Limpiar y comprobar el restablecimiento de campos y resultados.
 - Desactivar Internet y verificar el mensaje de error y la posibilidad de reintentar.
 - Compilar sin token y verificar el indicador de SODA2 público y la consulta real.
 - Usar un token inválido y comprobar el rechazo del servicio.
@@ -76,7 +84,7 @@ adb install -r app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk
 adb shell am instrument -w co.edu.unal.reto10.test/co.edu.unal.reto10.EducationalTestRunner
 ```
 
-El runner usa `Instrumentation` del SDK y comprueba la carga de las tres listas, selección de un banco y sus resultados en la interfaz, filtros, escape de apóstrofes y consultas reales con/sin resultados. Requiere Internet y acceso al servicio. El modo SODA3 requiere configurar el token antes de compilar.
+El runner usa `Instrumentation` del SDK y comprueba sugerencias reales, entrada de nombre completo y parcial, resultados, Limpiar, ciudades por departamento, fecha publicada y consultas reales con/sin resultados. La selección táctil de sugerencias se revisa visualmente en el emulador. Requiere Internet y acceso al servicio. El modo SODA3 requiere configurar el token antes de compilar.
 
 ## Fuentes
 

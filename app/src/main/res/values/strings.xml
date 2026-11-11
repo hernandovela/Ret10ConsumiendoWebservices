@@ -1,15 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Bancos de sangre · Reto 10</string>
-    <string name="title">Bancos de sangre</string>
-    <string name="subtitle">Colombia · Datos abiertos / INVIMA\nReto 10 · Consumo de servicios web</string>
+    <string name="app_name">Bancos de Sangre de Colombia</string>
+    <string name="title">Bancos de Sangre de Colombia</string>
+    <string name="subtitle">Directorio de datos abiertos · INVIMA</string>
     <string name="bank_hint">Nombre del banco</string>
     <string name="department_hint">Departamento (opcional)</string>
     <string name="city_hint">Ciudad (opcional)</string>
-    <string name="search">Consultar servicio</string>
+    <string name="search">Buscar bancos</string>
+    <string name="clear">Limpiar</string>
+    <string name="show_banks">Seleccionar banco de la lista</string>
+    <string name="bank_search_hint">Escribe o selecciona un banco</string>
+    <string name="version_loading">v%1$s · Consultando actualización de datos…</string>
+    <string name="version_data">v%1$s · Datos actualizados: %2$s</string>
+    <string name="date_unavailable">fecha no disponible</string>
+    <string name="filters_cleared">Filtros limpios. Puedes iniciar una nueva búsqueda.</string>
     <string name="footer">Aplicación educativa. Fuente: datos.gov.co · kwki-6kd6. Los registros no indican disponibilidad de sangre.</string>
-    <string name="instructions">Selecciona banco, departamento o ciudad y pulsa Consultar servicio. Usa Todos para omitir un filtro.</string>
-    <string name="all_banks">Todos los bancos</string>
+    <string name="instructions">Escribe o selecciona un banco. Puedes filtrar por ubicación; Todos permite omitir un filtro.</string>
     <string name="all_departments">Todos los departamentos</string>
     <string name="all_cities">Todas las ciudades</string>
     <string name="loading_options">Cargando listas desde datos.gov.co…</string>
@@ -28,6 +34,4 @@
     <string name="generic_error">No fue posible completar la consulta.</string>
     <string name="missing">No reportado</string>
     <string name="close">Cerrar</string>
-    <string name="soda2_mode">Servicio: SODA2 público · mismo conjunto de datos</string>
-    <string name="soda3_mode">Servicio: SODA3 · token local configurado</string>
 </resources>

@@ -15,13 +15,29 @@ public final class BloodBankService {
 
     public static boolean usesSoda3() { return !BuildConfig.SOCRATA_APP_TOKEN.trim().isEmpty(); }
 
+    /** Fecha de actualización de filas de la fuente, no fecha de instalación de la app. */
+    public long fetchUpdatedAt() throws Exception {
+        HttpURLConnection connection = (HttpURLConnection) new URL("https://www.datos.gov.co/api/views/kwki-6kd6.json").openConnection();
+        try {
+            connection.setConnectTimeout(10000); connection.setReadTimeout(10000);
+            if (connection.getResponseCode() != 200) throw new IOException("Metadatos no disponibles");
+            StringBuilder body = new StringBuilder();
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8))) {
+                String line; while ((line = reader.readLine()) != null) body.append(line);
+            }
+            long timestamp = new JSONObject(body.toString()).optLong("rowsUpdatedAt", 0);
+            if (timestamp <= 0) throw new IOException("Fecha no publicada");
+            return timestamp;
+        } finally { connection.disconnect(); }
+    }
+
     static String literal(String value) {
         return "'" + value.trim().replace("'", "''") + "'";
     }
 
     public static String query(String name, String department, String city) {
         List<String> filters = new ArrayList<>();
-        if (!name.trim().isEmpty()) filters.add("upper(bancodesangre) = upper(" + literal(name) + ")");
+        if (!name.trim().isEmpty()) filters.add("contains(upper(bancodesangre), upper(" + literal(name) + "))");
         if (!department.trim().isEmpty()) filters.add("upper(departamento) = upper(" + literal(department) + ")");
         if (!city.trim().isEmpty()) filters.add("upper(ciudad) = upper(" + literal(city) + ")");
         return "SELECT *" + (filters.isEmpty() ? "" : " WHERE " + String.join(" AND ", filters))
