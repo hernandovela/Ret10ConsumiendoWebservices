@@ -45,7 +45,9 @@ El nombre usa coincidencia parcial y la ubicación usa igualdad sin distinguir m
 
 ### Versión y fecha de los datos
 
-La versión de la aplicación es **1.1** (`versionCode=2`). La fecha que aparece junto a ella se obtiene en cada inicio del campo oficial `rowsUpdatedAt` del endpoint de metadatos, convirtiendo los segundos Unix a la zona `America/Bogota`. El 11/11/2026 la fuente reportó actualización de filas el **10/11/2026**. No se usa la fecha de instalación ni la fecha de cambios del código como fecha de los datos. Si los metadatos no están disponibles, se muestra fecha no disponible y la búsqueda sigue habilitada.
+La versión de la aplicación es **1.1.1** (`versionCode=3`). La fecha que aparece junto a ella se obtiene en cada inicio del campo oficial `rowsUpdatedAt` del endpoint de metadatos, convirtiendo los segundos Unix a la zona `America/Bogota`. El 11/11/2026 la fuente reportó actualización de filas el **10/11/2026**. No se usa la fecha de instalación ni la fecha de cambios del código como fecha de los datos. Si los metadatos no están disponibles, se muestra fecha no disponible y la búsqueda sigue habilitada.
+
+La versión 1.1.1 corrige la apertura de Departamento y Ciudad mediante `LocationSpinner`: todo el campo recibe el toque y abre un diálogo explícito con opciones, selección actual y Cancelar. Antes de abrirlo se cierran el autocompletado y el teclado. El diálogo se descarta al salir de la pantalla. El texto de la opción seleccionada no recibe foco ni intercepta el clic del campo.
 
 Ejemplo del cuerpo de consulta SODA3 (el token se envía en la cabecera `X-App-Token`):
 
@@ -84,7 +86,7 @@ adb install -r app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk
 adb shell am instrument -w co.edu.unal.reto10.test/co.edu.unal.reto10.EducationalTestRunner
 ```
 
-El runner usa `Instrumentation` del SDK y comprueba sugerencias reales, entrada de nombre completo y parcial, resultados, Limpiar, ciudades por departamento, fecha publicada y consultas reales con/sin resultados. La selección táctil de sugerencias se revisa visualmente en el emulador. Requiere Internet y acceso al servicio. El modo SODA3 requiere configurar el token antes de compilar.
+El runner usa `Instrumentation` del SDK y comprueba apertura visible de los diálogos de Departamento y Ciudad con hospital escrito, sugerencias reales, entrada de nombre completo y parcial, resultados, Limpiar, ciudades por departamento, fecha publicada y consultas reales con/sin resultados. La apertura por clic físico y la selección táctil de sugerencias se revisan visualmente en el emulador. Requiere Internet y acceso al servicio. El modo SODA3 requiere configurar el token antes de compilar.
 
 ## Fuentes
 

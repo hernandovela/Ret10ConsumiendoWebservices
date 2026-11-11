@@ -2,9 +2,13 @@
 
 ## Entorno
 
-Android Studio, SDK de compilación 36, Android Gradle Plugin 9.1.0 y Gradle wrapper 9.5.0. Emulador `Small_Phone`, dispositivo ADB `emulator-5554`. Aplicación `co.edu.unal.reto10`, versión debug 1.1.
+Android Studio, SDK de compilación 36, Android Gradle Plugin 9.1.0 y Gradle wrapper 9.5.0. Emulador `Small_Phone`, dispositivo ADB `emulator-5554`. Aplicación `co.edu.unal.reto10`, versión debug 1.1.1.
 
 ## Resultados comprobados
+
+Corrección 1.1.1: se reprodujo la falta de apertura de los selectores al pulsar su texto y flecha. Se reemplazó esa apertura por un diálogo explícito en `LocationSpinner`. La prueba de regresión ejecuta la acción de clic con hospital escrito y comprueba que ambos diálogos estén visibles y contengan opciones reales; no se limita a cambiar la selección programáticamente.
+
+La lista de Departamento se abrió con clic directo en el emulador reiniciado y permitió seleccionar Antioquia. La prueba instrumentada completa pasó. El emulador requirió un arranque sin instantánea después de un bloqueo de la automatización de accesibilidad; no se borraron sus datos.
 
 Actualización 1.1: nombre editable con sugerencias del catálogo, botón Limpiar, ciudades y bancos según ubicación y fecha oficial de la fuente. Instrumentación correcta para entrada de nombre completo y parcial, limpieza de campos/resultados, ciudades dependientes y fecha visible. La selección táctil de ASUNCIÓN LTDA desde las sugerencias fue verificada visualmente. `rowsUpdatedAt=1794336785`, correspondiente al 10/11/2026 en America/Bogota.
 
@@ -27,10 +31,14 @@ Actualización 1.1: nombre editable con sugerencias del catálogo, botón Limpia
 Salida del runner:
 
 ```text
-OK: selección y texto, limpiar, ciudades dependientes, fecha de fuente y API real. Total=85; filtrados=4; inexistentes=0
+OK: apertura visible de Departamento y Ciudad con nombre escrito; limpiar, filtros, fecha y API real. Total=85; filtrados=4; inexistentes=0
 ```
 
 ## Evidencia visual
+
+![Departamento abierto mediante clic](docs/evidencias/05-departamento-corregido.png)
+
+![Ciudades disponibles después de seleccionar Antioquia](docs/evidencias/06-ciudad-corregida.png)
 
 ![Formulario versión 1.1 con Limpiar y fecha de datos](docs/evidencias/04-experiencia-v1.1.png)
 

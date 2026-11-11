@@ -32,6 +32,16 @@ public class EducationalTestRunner extends Instrumentation {
             waitUntil(() -> ((Button) current.findViewById(R.id.search)).isEnabled()
                     && ((AutoCompleteTextView) current.findViewById(R.id.name)).getAdapter() != null);
             onMain(() -> {
+                AutoCompleteTextView bank = current.findViewById(R.id.name);
+                bank.setText("hospital", false); bank.dismissDropDown(); bank.clearFocus();
+                ((android.view.inputmethod.InputMethodManager) current.getSystemService(Activity.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(bank.getWindowToken(), 0);
+            });
+            waitForIdleSync();
+            verifyLocationPicker(current, R.id.department, R.string.department_hint);
+            verifyLocationPicker(current, R.id.city, R.string.city_hint);
+            onMain(() -> current.findViewById(R.id.clear).performClick());
+            waitForIdleSync();
+            onMain(() -> {
                 check(((AutoCompleteTextView) current.findViewById(R.id.name)).getAdapter().getCount() > 1, "Sugerencias de bancos cargadas");
                 check(((Spinner) current.findViewById(R.id.department)).getCount() > 1, "Lista de departamentos cargada");
                 check(((Spinner) current.findViewById(R.id.city)).getCount() > 1, "Lista de ciudades cargada");
@@ -103,7 +113,7 @@ public class EducationalTestRunner extends Instrumentation {
             }
             JSONArray empty = service.fetch(BloodBankService.query("ZZZ_RETO10_INEXISTENTE_O'Brien", "", ""));
             check(empty.length() == 0, "Sin resultados y apóstrofe aceptado por el servidor");
-            result.putString("stream", "\nOK: selección y texto, limpiar, ciudades dependientes, fecha de fuente y API real. Total=" + all.length() + "; filtrados=" + filtered.length() + "; inexistentes=" + empty.length() + "\n");
+            result.putString("stream", "\nOK: apertura visible de Departamento y Ciudad con nombre escrito; limpiar, filtros, fecha y API real. Total=" + all.length() + "; filtrados=" + filtered.length() + "; inexistentes=" + empty.length() + "\n");
             finish(Activity.RESULT_OK, result);
         } catch (Throwable error) {
             result.putString("stream", "\nFAIL: " + error + "\n");
@@ -117,6 +127,18 @@ public class EducationalTestRunner extends Instrumentation {
         java.util.concurrent.atomic.AtomicReference<Throwable> failure = new java.util.concurrent.atomic.AtomicReference<>();
         super.runOnMainSync(() -> { try { action.run(); } catch (Throwable error) { failure.set(error); } });
         if (failure.get() != null) throw new AssertionError(failure.get());
+    }
+
+    private void verifyLocationPicker(Activity activity, int fieldId, int titleId) throws Exception {
+        onMain(() -> check(activity.findViewById(fieldId).performClick(), "El selector acepta la acción de clic"));
+        waitForIdleSync();
+        onMain(() -> {
+            android.app.AlertDialog dialog = ((LocationSpinner) activity.findViewById(fieldId)).getSelectionDialog();
+            check(dialog != null && dialog.isShowing() && dialog.getListView().isShown(), "Lista visible de " + activity.getString(titleId));
+            check(dialog.getListView().getCount() > 1, "Opciones reales visibles");
+            dialog.dismiss();
+        });
+        waitForIdleSync();
     }
 
     private static void check(boolean condition, String message) {
