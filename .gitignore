@@ -5,3 +5,5 @@ local.properties
 *.iml
 *.jks
 *.keystore
+# Criterio de JVM generado localmente por Android Studio.
+gradle/gradle-daemon-jvm.properties

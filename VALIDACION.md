@@ -19,6 +19,8 @@ Android Studio, SDK de compilación 36, Android Gradle Plugin 9.1.0 y Gradle wra
 | Inspección visual del listado | 85 resultados visibles |
 | Inspección visual del detalle | Nombre, código, ubicación y demás campos visibles |
 | SODA3 sin token | 403 `authentication_required`, comprobado por petición HTTP |
+| Sincronización del proyecto en Android Studio | Correcta; módulo app reconocido y Small Phone seleccionado |
+| Run desde Android Studio (Shift+F10) | Instalación finalizada correctamente y MainActivity iniciada |
 
 Salida del runner:
 
