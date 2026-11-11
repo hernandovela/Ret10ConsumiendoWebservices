@@ -1,0 +1,5 @@
+# Copiar como local.properties. No subir el archivo local.properties a Git.
+sdk.dir=C\:/Users/Usuario/AppData/Local/Android/Sdk
+# Vacío: SODA2 público. Con token válido: SODA3.
+socrata.app.token=
+

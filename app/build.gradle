@@ -1,0 +1,20 @@
+plugins { id 'com.android.application' }
+def local = new Properties()
+def localFile = rootProject.file('local.properties')
+if (localFile.exists()) localFile.withInputStream { local.load(it) }
+def token = local.getProperty('socrata.app.token', '').replace('\\', '\\\\').replace('"', '\\"').replace('\n', '').replace('\r', '')
+android {
+    namespace 'co.edu.unal.reto10'
+    compileSdk 36
+    defaultConfig {
+        applicationId 'co.edu.unal.reto10'
+        minSdk 26
+        targetSdk 36
+        versionCode 1
+        versionName '1.0'
+        testInstrumentationRunner 'co.edu.unal.reto10.EducationalTestRunner'
+        buildConfigField 'String', 'SOCRATA_APP_TOKEN', '"' + token + '"'
+    }
+    buildFeatures { buildConfig true }
+    compileOptions { sourceCompatibility JavaVersion.VERSION_17; targetCompatibility JavaVersion.VERSION_17 }
+}

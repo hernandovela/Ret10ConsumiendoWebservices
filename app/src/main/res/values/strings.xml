@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Bancos de sangre · Reto 10</string>
+    <string name="title">Bancos de sangre</string>
+    <string name="subtitle">Colombia · Datos abiertos / INVIMA\nReto 10 · Consumo de servicios web</string>
+    <string name="bank_hint">Nombre del banco</string>
+    <string name="department_hint">Departamento (opcional)</string>
+    <string name="city_hint">Ciudad (opcional)</string>
+    <string name="search">Consultar servicio</string>
+    <string name="footer">Aplicación educativa. Fuente: datos.gov.co · kwki-6kd6. Los registros no indican disponibilidad de sangre.</string>
+    <string name="instructions">Ingresa filtros opcionales y pulsa Consultar servicio. Departamento y ciudad requieren el nombre completo.</string>
+    <string name="loading">Consultando datos.gov.co…</string>
+    <string name="empty">Sin resultados. Revisa los filtros.</string>
+    <plurals name="results">
+        <item quantity="one">%1$d resultado. Toca el banco para ver el detalle.</item>
+        <item quantity="other">%1$d resultados. Toca un banco para ver el detalle.</item>
+    </plurals>
+    <string name="limited">Se muestran los primeros 1000; precisa los filtros.</string>
+    <string name="network_error">No se pudo conectar. Revisa tu conexión a Internet.</string>
+    <string name="timeout_error">El servicio tardó demasiado. Vuelve a consultar.</string>
+    <string name="json_error">La respuesta del servicio no tiene el formato JSON esperado.</string>
+    <string name="generic_error">No fue posible completar la consulta.</string>
+    <string name="missing">No reportado</string>
+    <string name="close">Cerrar</string>
+    <string name="soda2_mode">Servicio: SODA2 público · mismo conjunto de datos</string>
+    <string name="soda3_mode">Servicio: SODA3 · token local configurado</string>
+</resources>

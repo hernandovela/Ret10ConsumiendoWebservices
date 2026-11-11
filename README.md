@@ -86,4 +86,3 @@ El runner usa `Instrumentation` del SDK y comprueba filtros, escape de apóstrof
 - Endpoint público SODA2 autorizado: https://www.datos.gov.co/resource/kwki-6kd6.json
 
 Los datos pertenecen a la fuente pública. La aplicación no verifica disponibilidad de unidades de sangre ni reemplaza la consulta directa con los establecimientos.
-
