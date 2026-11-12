@@ -8,6 +8,7 @@
     <string name="city_hint">Ciudad (opcional)</string>
     <string name="search">Buscar bancos</string>
     <string name="clear">Limpiar</string>
+    <string name="cancel">Cancelar</string>
     <string name="show_banks">Seleccionar banco de la lista</string>
     <string name="bank_search_hint">Escribe o selecciona un banco</string>
     <string name="version_loading">v%1$s · Consultando actualización de datos…</string>

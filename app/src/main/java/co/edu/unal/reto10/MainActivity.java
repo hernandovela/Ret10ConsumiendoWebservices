@@ -16,7 +16,7 @@ public class MainActivity extends Activity {
     private View progress;
     private ListView list;
     private AutoCompleteTextView name;
-    private Spinner department, city;
+    private LocationPicker department, city;
     private View chooseBank;
     private JSONArray catalog = new JSONArray();
     private String lastDepartment = "", lastCity = "";
@@ -54,23 +54,17 @@ public class MainActivity extends Activity {
             return false;
         });
         clear.setOnClickListener(v -> clearFilters());
-        department.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            public void onNothingSelected(AdapterView<?> parent) { }
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        department.setOnSelectionChangedListener(() -> {
                 String current = selected(department);
                 if (!filtersReady || current.equals(lastDepartment)) return;
                 lastDepartment = current; lastCity = "";
                 populate(city, matchingCatalog(false), "ciudad", R.string.all_cities);
                 name.setText("", false); updateBankOptions(); clearResults();
-            }
         });
-        city.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            public void onNothingSelected(AdapterView<?> parent) { }
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        city.setOnSelectionChangedListener(() -> {
                 String current = selected(city);
                 if (!filtersReady || current.equals(lastCity)) return;
                 lastCity = current; name.setText("", false); updateBankOptions(); clearResults();
-            }
         });
         loadOptions();
     }
@@ -147,7 +141,7 @@ public class MainActivity extends Activity {
         status.setText(R.string.filters_cleared);
     }
 
-    private void populate(Spinner spinner, JSONArray catalog, String field, int allLabel) {
+    private void populate(LocationPicker spinner, JSONArray catalog, String field, int allLabel) {
         SortedSet<String> unique = new TreeSet<>();
         for (int i = 0; i < catalog.length(); i++) {
             JSONObject bank = catalog.optJSONObject(i);
@@ -158,12 +152,10 @@ public class MainActivity extends Activity {
         }
         List<String> options = new ArrayList<>();
         options.add(getString(allLabel)); options.addAll(unique);
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, R.layout.spinner_selected, options);
-        adapter.setDropDownViewResource(R.layout.spinner_option);
-        spinner.setAdapter(adapter);
+        spinner.setOptions(options);
     }
 
-    private String selected(Spinner spinner) {
+    private String selected(LocationPicker spinner) {
         return spinner.getSelectedItemPosition() <= 0 ? "" : spinner.getSelectedItem().toString();
     }
 

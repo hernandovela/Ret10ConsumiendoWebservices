@@ -5,7 +5,7 @@ import android.app.Instrumentation;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
-import android.widget.Spinner;
+
 import android.widget.ListView;
 import android.widget.AutoCompleteTextView;
 import android.widget.TextView;
@@ -38,13 +38,18 @@ public class EducationalTestRunner extends Instrumentation {
             });
             waitForIdleSync();
             verifyLocationPicker(current, R.id.department, R.string.department_hint);
+            onMain(() -> ((AutoCompleteTextView) current.findViewById(R.id.name)).setText("hospital", false));
+            verifyLocationPicker(current, R.id.city, R.string.city_hint);
+            onMain(() -> current.findViewById(R.id.clear).performClick());
+            waitForIdleSync();
+            verifyLocationPicker(current, R.id.department, R.string.department_hint);
             verifyLocationPicker(current, R.id.city, R.string.city_hint);
             onMain(() -> current.findViewById(R.id.clear).performClick());
             waitForIdleSync();
             onMain(() -> {
                 check(((AutoCompleteTextView) current.findViewById(R.id.name)).getAdapter().getCount() > 1, "Sugerencias de bancos cargadas");
-                check(((Spinner) current.findViewById(R.id.department)).getCount() > 1, "Lista de departamentos cargada");
-                check(((Spinner) current.findViewById(R.id.city)).getCount() > 1, "Lista de ciudades cargada");
+                check(((LocationPicker) current.findViewById(R.id.department)).getCount() > 1, "Lista de departamentos cargada");
+                check(((LocationPicker) current.findViewById(R.id.city)).getCount() > 1, "Lista de ciudades cargada");
                 check(current.findViewById(R.id.list) != null, "Listado presente");
                 check(((Button) current.findViewById(R.id.search)).isEnabled(), "Consulta disponible");
             });
@@ -75,16 +80,16 @@ public class EducationalTestRunner extends Instrumentation {
             waitForIdleSync();
             onMain(() -> {
                 check(((AutoCompleteTextView) current.findViewById(R.id.name)).getText().length() == 0, "Limpiar borra el nombre");
-                check(((Spinner) current.findViewById(R.id.department)).getSelectedItemPosition() == 0, "Limpiar restablece departamento");
-                check(((Spinner) current.findViewById(R.id.city)).getSelectedItemPosition() == 0, "Limpiar restablece ciudad");
+                check(((LocationPicker) current.findViewById(R.id.department)).getSelectedItemPosition() == 0, "Limpiar restablece departamento");
+                check(((LocationPicker) current.findViewById(R.id.city)).getSelectedItemPosition() == 0, "Limpiar restablece ciudad");
                 check(((ListView) current.findViewById(R.id.list)).getCount() == 0, "Limpiar retira resultados anteriores");
-                Spinner departments = current.findViewById(R.id.department);
+                LocationPicker departments = current.findViewById(R.id.department);
                 for (int i = 1; i < departments.getCount(); i++)
                     if (department.equals(departments.getItemAtPosition(i))) departments.setSelection(i);
             });
             waitForIdleSync();
             onMain(() -> {
-                Spinner cities = current.findViewById(R.id.city);
+                LocationPicker cities = current.findViewById(R.id.city);
                 for (int i = 1; i < cities.getCount(); i++) {
                     boolean belongs = false;
                     for (int j = 0; j < all.length(); j++) {
@@ -113,7 +118,9 @@ public class EducationalTestRunner extends Instrumentation {
             }
             JSONArray empty = service.fetch(BloodBankService.query("ZZZ_RETO10_INEXISTENTE_O'Brien", "", ""));
             check(empty.length() == 0, "Sin resultados y apóstrofe aceptado por el servidor");
-            result.putString("stream", "\nOK: apertura visible de Departamento y Ciudad con nombre escrito; limpiar, filtros, fecha y API real. Total=" + all.length() + "; filtrados=" + filtered.length() + "; inexistentes=" + empty.length() + "\n");
+            result.putString("stream", "\nPASS: Departamento y Ciudad, centro y flecha, nombre escrito, después de Limpiar, seleccionar y reabrir (8 aperturas por DOWN/UP)."
+                    + "\nPASS: sugerencias, nombre completo/parcial, Limpiar, ciudades dependientes y fecha de fuente."
+                    + "\nPASS: API real. Total=" + all.length() + "; filtrados=" + filtered.length() + "; inexistentes=" + empty.length() + "\n");
             finish(Activity.RESULT_OK, result);
         } catch (Throwable error) {
             result.putString("stream", "\nFAIL: " + error + "\n");
@@ -130,15 +137,32 @@ public class EducationalTestRunner extends Instrumentation {
     }
 
     private void verifyLocationPicker(Activity activity, int fieldId, int titleId) throws Exception {
-        onMain(() -> check(activity.findViewById(fieldId).performClick(), "El selector acepta la acción de clic"));
-        waitForIdleSync();
-        onMain(() -> {
-            android.app.AlertDialog dialog = ((LocationSpinner) activity.findViewById(fieldId)).getSelectionDialog();
-            check(dialog != null && dialog.isShowing() && dialog.getListView().isShown(), "Lista visible de " + activity.getString(titleId));
-            check(dialog.getListView().getCount() > 1, "Opciones reales visibles");
-            dialog.dismiss();
-        });
-        waitForIdleSync();
+        for (boolean arrow : new boolean[]{false, true}) {
+            onMain(() -> {
+                android.view.View field = activity.findViewById(fieldId);
+                float x = arrow ? field.getWidth() - 12 : field.getWidth() / 2f;
+                float y = field.getHeight() / 2f;
+                long time = android.os.SystemClock.uptimeMillis();
+                android.view.MotionEvent down = android.view.MotionEvent.obtain(time, time, android.view.MotionEvent.ACTION_DOWN, x, y, 0);
+                android.view.MotionEvent up = android.view.MotionEvent.obtain(time, time + 80, android.view.MotionEvent.ACTION_UP, x, y, 0);
+                try { field.dispatchTouchEvent(down); field.dispatchTouchEvent(up); }
+                finally { down.recycle(); up.recycle(); }
+            });
+            waitForIdleSync();
+            onMain(() -> {
+                android.app.AlertDialog dialog = ((LocationPicker) activity.findViewById(fieldId)).getSelectionDialog();
+                check(dialog != null && dialog.isShowing() && dialog.getListView().isShown(), "Pulsación en " + (arrow ? "flecha" : "centro") + " abre " + activity.getString(titleId));
+                check(dialog.getListView().getCount() > 1, "Opciones reales visibles");
+                if (!arrow) {
+                    dialog.getListView().performItemClick(dialog.getListView().getChildAt(1), 1, dialog.getListView().getAdapter().getItemId(1));
+                    check(((LocationPicker) activity.findViewById(fieldId)).getSelectedItemPosition() == 1, "La opción elegida se refleja en el campo");
+                } else {
+                    check(dialog.getListView().getCheckedItemPosition() == 1, "Reabrir conserva la opción seleccionada");
+                    dialog.getButton(android.content.DialogInterface.BUTTON_NEGATIVE).performClick();
+                }
+            });
+            waitForIdleSync();
+        }
     }
 
     private static void check(boolean condition, String message) {

@@ -10,9 +10,9 @@
         <ImageButton android:id="@+id/choose_bank" android:layout_width="48dp" android:layout_height="48dp" android:src="@android:drawable/arrow_down_float" android:contentDescription="@string/show_banks" android:background="?android:attr/selectableItemBackgroundBorderless" />
     </LinearLayout>
     <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/department_hint" android:labelFor="@id/department" android:textSize="12sp" android:textStyle="bold" />
-    <co.edu.unal.reto10.LocationSpinner android:id="@+id/department" android:layout_width="match_parent" android:layout_height="48dp" android:contentDescription="@string/department_hint" android:spinnerMode="dialog" android:prompt="@string/department_hint" />
+    <co.edu.unal.reto10.LocationPicker android:id="@+id/department" android:layout_width="match_parent" android:layout_height="48dp" android:contentDescription="@string/department_hint" android:background="?android:attr/selectableItemBackground" android:textColor="#292929" android:textSize="16sp" />
     <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/city_hint" android:labelFor="@id/city" android:textSize="12sp" android:textStyle="bold" />
-    <co.edu.unal.reto10.LocationSpinner android:id="@+id/city" android:layout_width="match_parent" android:layout_height="48dp" android:contentDescription="@string/city_hint" android:spinnerMode="dialog" android:prompt="@string/city_hint" />
+    <co.edu.unal.reto10.LocationPicker android:id="@+id/city" android:layout_width="match_parent" android:layout_height="48dp" android:contentDescription="@string/city_hint" android:background="?android:attr/selectableItemBackground" android:textColor="#292929" android:textSize="16sp" />
     <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal">
         <Button android:id="@+id/clear" android:layout_width="wrap_content" android:layout_height="48dp" android:text="@string/clear" android:textColor="#8B1631" style="?android:attr/borderlessButtonStyle" />
         <!-- La acción principal se resalta con relleno; Limpiar es una acción secundaria de texto. -->

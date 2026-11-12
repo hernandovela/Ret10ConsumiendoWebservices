@@ -1,5 +1,7 @@
 # Validación realizada · 11 de noviembre de 2026
 
+**Actualización 12/11/2026, versión 1.1.2:** el usuario volvió a reportar el fallo de 1.1.1. Las verificaciones históricas siguientes no bastaron para cubrir el recorrido táctil. La corrección actual elimina Spinner y agrega pruebas DOWN/UP, selección y reapertura. Consultar el [informe y resultados actuales](docs/pruebas/REGRESION_SELECTORES.md). Las capturas de versiones anteriores se conservan como antecedentes, no como evidencia de la versión actual.
+
 ## Entorno
 
 Android Studio, SDK de compilación 36, Android Gradle Plugin 9.1.0 y Gradle wrapper 9.5.0. Emulador `Small_Phone`, dispositivo ADB `emulator-5554`. Aplicación `co.edu.unal.reto10`, versión debug 1.1.1.
