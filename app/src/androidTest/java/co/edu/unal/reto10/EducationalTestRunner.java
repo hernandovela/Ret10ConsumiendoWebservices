@@ -75,6 +75,27 @@ public class EducationalTestRunner extends Instrumentation {
                 for (int i = 0; i < rows.getCount(); i++)
                     check(bankName.equals(((Map<?, ?>) rows.getItemAtPosition(i)).get("title")), "Solo aparece el banco seleccionado");
             });
+            onMain(() -> {
+                check(current.findViewById(R.id.filter_panel).getVisibility() == android.view.View.GONE, "Resultados disponen de espacio al contraer filtros");
+                current.findViewById(R.id.filter_toggle).performClick();
+                check(current.findViewById(R.id.filter_panel).getVisibility() == android.view.View.VISIBLE, "Modificar filtros reabre formulario");
+                current.findViewById(R.id.filter_toggle).performClick();
+                ListView rows = current.findViewById(R.id.list);
+                android.view.View row = rows.getAdapter().getView(0, null, rows);
+                check(row.findViewById(android.R.id.text1) != null && row.findViewById(android.R.id.text2) != null,
+                        "Tarjeta médica contiene nombre y ubicación");
+                rows.performItemClick(row, 0, rows.getAdapter().getItemId(0));
+            });
+            waitForIdleSync();
+            onMain(() -> {
+                android.app.AlertDialog detail = ((MainActivity) current).getDetailDialog();
+                check(detail != null && detail.isShowing(), "La tarjeta abre información del establecimiento");
+                detail.getButton(android.content.DialogInterface.BUTTON_POSITIVE).performClick();
+
+                check(BuildConfig.VERSION_NAME.equals("1.2.0"), "Versión 1.2.0 instalada");
+            });
+            waitForIdleSync();
+            onMain(() -> check(!((MainActivity) current).getDetailDialog().isShowing(), "Cerrar regresa al listado"));
             String department = first.getString("departamento"), city = first.getString("ciudad");
             onMain(() -> current.findViewById(R.id.clear).performClick());
             waitForIdleSync();
@@ -120,6 +141,7 @@ public class EducationalTestRunner extends Instrumentation {
             check(empty.length() == 0, "Sin resultados y apóstrofe aceptado por el servidor");
             result.putString("stream", "\nPASS: Departamento y Ciudad, centro y flecha, nombre escrito, después de Limpiar, seleccionar y reabrir (8 aperturas por DOWN/UP)."
                     + "\nPASS: sugerencias, nombre completo/parcial, Limpiar, ciudades dependientes y fecha de fuente."
+                    + "\nPASS: versión 1.2.0, tarjeta con nombre/ubicación, contraer/reabrir filtros, abrir detalle y cerrar. Contexto médico sin cambiar selectores."
                     + "\nPASS: API real. Total=" + all.length() + "; filtrados=" + filtered.length() + "; inexistentes=" + empty.length() + "\n");
             finish(Activity.RESULT_OK, result);
         } catch (Throwable error) {

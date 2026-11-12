@@ -10,8 +10,8 @@ android {
         applicationId 'co.edu.unal.reto10'
         minSdk 26
         targetSdk 36
-        versionCode 4
-        versionName '1.1.2'
+        versionCode 5
+        versionName '1.2.0'
         testInstrumentationRunner 'co.edu.unal.reto10.EducationalTestRunner'
         buildConfigField 'String', 'SOCRATA_APP_TOKEN', '"' + token + '"'
     }

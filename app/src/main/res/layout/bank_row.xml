@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="wrap_content" android:minHeight="104dp" android:padding="14dp" android:background="@drawable/medical_card" android:orientation="horizontal" android:gravity="center_vertical">
+    <ImageView android:layout_width="32dp" android:layout_height="32dp" android:layout_marginEnd="12dp" android:src="@drawable/ic_hospital" android:importantForAccessibility="no"/>
+    <LinearLayout android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:orientation="vertical">
+        <TextView android:id="@android:id/text1" android:layout_width="match_parent" android:layout_height="wrap_content" android:textSize="14sp" android:textStyle="bold" android:textColor="@color/ink"/>
+        <TextView android:id="@android:id/text2" android:layout_width="match_parent" android:layout_height="wrap_content" android:textSize="12sp" android:paddingTop="4dp"/>
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/view_information" android:textSize="12sp" android:paddingTop="6dp" android:textColor="@color/clinical"/>
+    </LinearLayout>
+</LinearLayout>

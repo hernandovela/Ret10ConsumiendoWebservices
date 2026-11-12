@@ -2,9 +2,23 @@
 
 Aplicación educativa Android en **Java y XML** que consulta el conjunto público de bancos de sangre de Colombia y permite buscar establecimientos por nombre, departamento y ciudad.
 
-**Versión:** 1.1.2 · **Estado de validación:** 12 de noviembre de 2026.
+**Versión:** 1.2.0 · **Estado de validación:** 12 de noviembre de 2026.
 
 Desarrollada en el contexto académico de una maestría de la Universidad Nacional de Colombia indicado por el solicitante. No representa una aplicación oficial de la Universidad ni de INVIMA.
+
+## Diseño médico · versión 1.2.0
+
+Diseño aprobado por el solicitante antes de instalar la nueva versión. La interfaz utiliza azul clínico, fondo claro, un símbolo de sangre y tarjetas con iconos de establecimientos de salud. Se mantienen Java, XML y componentes del SDK Android.
+
+- Formulario agrupado con nombre editable y sugerencias, ubicación en dos columnas y acción Limpiar.
+- Los campos de ubicación muestran **Todos** para omitir el filtro; los diálogos conservan las etiquetas completas y la selección actual.
+- Al obtener resultados, el formulario se contrae para dar espacio a las tarjetas. **Modificar filtros** permite abrirlo; **Ocultar filtros** vuelve al listado amplio.
+- Tarjetas con nombre, ciudad, departamento y acceso al detalle. La ficha separa las etiquetas de sus valores y permite seleccionar el texto.
+- Versión de la app y fecha de actualización de la fuente visibles al pie. La fecha sigue procediendo de `rowsUpdatedAt`.
+
+| Inicio | Resultados | Detalle |
+| --- | --- | --- |
+| ![Formulario médico](docs/evidencias/09-inicio-v1.2.0.png) | ![Tarjetas y filtros contraídos](docs/evidencias/12-resultados-v1.2.0.png) | ![Ficha del establecimiento](docs/evidencias/13-detalle-v1.2.0.png) |
 
 ## Funcionalidades
 
@@ -118,7 +132,7 @@ En SODA2 se codifica la consulta mediante `URLEncoder`, se envía en `$query` y 
 
 ## Versión de la app y fecha de los datos
 
-La versión **1.1.2** identifica el código de la app (`versionCode=4`). La fecha mostrada junto a ella identifica la actualización de los registros de la fuente: se obtiene del campo `rowsUpdatedAt`, expresado en segundos Unix, y se presenta en la zona **America/Bogota**.
+La versión **1.2.0** identifica el código de la app (`versionCode=5`). La fecha mostrada junto a ella identifica la actualización de los registros de la fuente: se obtiene del campo `rowsUpdatedAt`, expresado en segundos Unix, y se presenta en la zona **America/Bogota**.
 
 Durante las verificaciones la fuente reportó **10/11/2026**. Esa fecha se consulta al iniciar y puede cambiar con las actualizaciones del conjunto. No corresponde a la instalación ni a la compilación de la app. Si los metadatos no están disponibles, se muestra fecha no disponible y la búsqueda sigue habilitada.
 
@@ -137,6 +151,15 @@ Durante las verificaciones la fuente reportó **10/11/2026**. Esa fecha se consu
 Las operaciones de red se ejecutan en un `ExecutorService`, fuera del hilo principal. La actividad actualiza la interfaz en el hilo principal. El procesamiento utiliza los objetos JSON proporcionados por Android.
 
 ## Pruebas y evidencias
+
+**Validación de 1.2.0, 12/11/2026:** compilación e instalación correctas; regresión instrumentada por SODA3 con token local: PASS. Incluye ocho aperturas DOWN/UP de ubicación, filtros dependientes, nombre completo/parcial, Limpiar, fecha, tarjetas, contraer/reabrir filtros y abrir/cerrar detalle. La fuente devolvió 85 registros, 4 filtrados y 0 inexistentes. Revisión manual con ratón en Small_Phone y cinco capturas actualizadas.
+
+Android Lint final: **0 errores y 1 advertencia** sobre una versión más reciente de Gradle. Se conserva Gradle 9.5.0 para no cambiar las herramientas del ejercicio durante el rediseño. No se atribuye a esta versión el resultado histórico «No issues found» de 1.1.2.
+
+- [Informe y matriz de UX 1.2.0](docs/pruebas/UX_V1.2.0.md).
+- [Salida real del runner 1.2.0](docs/pruebas/resultado-v1.2.0.txt).
+
+Las evidencias siguientes corresponden a la regresión histórica de 1.1.2:
 
 La versión 1.1.2 sustituyó los selectores basados en Spinner por `LocationPicker`, que hereda de Button. La regresión comprueba el recorrido DOWN/UP sobre el centro y la flecha de cada campo, además de selección, reapertura, cancelación y limpieza.
 

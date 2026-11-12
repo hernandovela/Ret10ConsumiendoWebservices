@@ -1,0 +1,7 @@
+Fecha: 12/11/2026 · Small_Phone API 37.1 · app 1.2.0 (5) · SODA3 con token local
+
+PASS: Departamento y Ciudad, centro y flecha, nombre escrito, después de Limpiar, seleccionar y reabrir (8 aperturas por DOWN/UP).
+PASS: sugerencias, nombre completo/parcial, Limpiar, ciudades dependientes y fecha de fuente.
+PASS: versión 1.2.0, tarjeta con nombre/ubicación, contraer/reabrir filtros, abrir detalle y cerrar. Contexto médico sin cambiar selectores.
+PASS: API real. Total=85; filtrados=4; inexistentes=0
+

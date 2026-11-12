@@ -59,3 +59,7 @@ La alternativa SODA2 fue autorizada por el solicitante. Se usa el mismo conjunto
 No se ejecutaron pruebas de pérdida de conectividad, rotación durante una petición ni pruebas en dispositivos físicos. La cantidad de registros puede cambiar con las actualizaciones de la fuente.
 
 Las advertencias de Gradle sobre APIs obsoletas del complemento y las notas de Java sobre compatibilidad no son incidencias de Android Lint ni fallos de compilación.
+
+## Rediseño médico 1.2.0 · 12/11/2026
+
+Diseño aprobado antes de implementar y desplegar. Se instalaron la app y las pruebas en Small_Phone. Regresión SODA3: PASS, incluidos los selectores, filtros plegables, tarjetas y detalle. Consulta real: 85 registros, 4 filtrados, 0 inexistentes. Compilación correcta; Lint: 0 errores y 1 advertencia sobre versión disponible de Gradle. Revisión visual con ratón y cinco nuevas capturas. [Informe UX 1.2.0](docs/pruebas/UX_V1.2.0.md) y [salida instrumentada](docs/pruebas/resultado-v1.2.0.txt).

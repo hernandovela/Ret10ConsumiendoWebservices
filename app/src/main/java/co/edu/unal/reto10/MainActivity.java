@@ -12,7 +12,8 @@ public class MainActivity extends Activity {
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
     private final List<JSONObject> banks = new ArrayList<>();
     private TextView status;
-    private Button search, clear;
+    private Button search, clear, filterToggle;
+    private View filterPanel;
     private View progress;
     private ListView list;
     private AutoCompleteTextView name;
@@ -21,13 +22,16 @@ public class MainActivity extends Activity {
     private JSONArray catalog = new JSONArray();
     private String lastDepartment = "", lastCity = "";
     private boolean filtersReady;
+    private AlertDialog detailDialog;
+
+    AlertDialog getDetailDialog() { return detailDialog; }
 
     @Override public void onCreate(Bundle state) {
         super.onCreate(state);
         setContentView(co.edu.unal.reto10.R.layout.activity_main);
         View root = findViewById(R.id.root);
         root.setOnApplyWindowInsetsListener((v, insets) -> {
-            int padding = (int) (20 * getResources().getDisplayMetrics().density);
+            int padding = (int) (16 * getResources().getDisplayMetrics().density);
             if (android.os.Build.VERSION.SDK_INT >= 30) {
                 android.graphics.Insets bars = insets.getInsets(android.view.WindowInsets.Type.systemBars());
                 v.setPadding(padding + bars.left, padding + bars.top, padding + bars.right, padding + bars.bottom);
@@ -41,6 +45,8 @@ public class MainActivity extends Activity {
         status = findViewById(R.id.status); search = findViewById(R.id.search);
         clear = findViewById(R.id.clear); chooseBank = findViewById(R.id.choose_bank);
         progress = findViewById(R.id.progress); list = findViewById(R.id.list);
+        filterPanel = findViewById(R.id.filter_panel); filterToggle = findViewById(R.id.filter_toggle);
+        filterToggle.setOnClickListener(v -> setFilterPanelVisible(filterPanel.getVisibility() != View.VISIBLE));
         ((TextView) findViewById(R.id.service_mode)).setText(getString(R.string.version_loading, BuildConfig.VERSION_NAME));
         status.setText(R.string.instructions);
         search.setOnClickListener(v -> { if (filtersReady) load(); else loadOptions(); });
@@ -126,7 +132,13 @@ public class MainActivity extends Activity {
         name.setAdapter(new ArrayAdapter<>(this, R.layout.spinner_option, new ArrayList<>(options)));
     }
 
+    private void setFilterPanelVisible(boolean visible) {
+        filterPanel.setVisibility(visible ? View.VISIBLE : View.GONE);
+        filterToggle.setText(visible ? R.string.hide_filters : R.string.edit_filters);
+    }
+
     private void clearResults() {
+        setFilterPanelVisible(true); filterToggle.setVisibility(View.GONE);
         banks.clear(); list.setAdapter(null); status.setText(R.string.instructions);
     }
 
@@ -185,8 +197,10 @@ public class MainActivity extends Activity {
                         row.put("subtitle", value(bank, "ciudad") + " · " + value(bank, "departamento"));
                         rows.add(row);
                     }
-                    list.setAdapter(new SimpleAdapter(this, rows, android.R.layout.simple_list_item_2,
+                    list.setAdapter(new SimpleAdapter(this, rows, R.layout.bank_row,
                             new String[]{"title", "subtitle"}, new int[]{android.R.id.text1, android.R.id.text2}));
+                    filterToggle.setVisibility(banks.isEmpty() ? View.GONE : View.VISIBLE);
+                    setFilterPanelVisible(banks.isEmpty());
                     finishLoad(banks.isEmpty() ? getString(R.string.empty) : getResources().getQuantityString(R.plurals.results, banks.size(), banks.size())
                             + (banks.size() == 1000 ? " " + getString(R.string.limited) : ""));
                 });
@@ -213,13 +227,27 @@ public class MainActivity extends Activity {
                 {"estado", "Estado"}, {"concepto_tecnico", "Concepto técnico"}, {"aferesis", "Aféresis"},
                 {"tecnica_aferesis", "Técnica de aféresis"}, {"numero_de_puestos_fijos_recolectores_sangre", "Puestos recolectores"},
                 {"ultima_visita", "Última visita"}, {"a_o_de_cierre", "Año de cierre"}};
-        StringBuilder detail = new StringBuilder();
-        for (String[] field : fields) detail.append(field[1]).append(": ").append(value(bank, field[0])).append("\n\n");
-        TextView text = new TextView(this); text.setText(detail); text.setTextIsSelectable(true); text.setPadding(24, 16, 24, 16);
-        ScrollView scroll = new ScrollView(this); scroll.addView(text);
-        new AlertDialog.Builder(this).setTitle(value(bank, "bancodesangre")).setView(scroll).setPositiveButton(R.string.close, null).show();
+        LinearLayout content = new LinearLayout(this); content.setOrientation(LinearLayout.VERTICAL);
+        int space = (int) (20 * getResources().getDisplayMetrics().density);
+        content.setPadding(space, space / 2, space, space);
+        TextView heading = new TextView(this); heading.setText(value(bank, "bancodesangre"));
+        heading.setTextSize(20); heading.setTextColor(getColor(R.color.ink));
+        heading.setTypeface(null, android.graphics.Typeface.BOLD); content.addView(heading);
+        TextView notice = new TextView(this); notice.setText(R.string.detail_notice);
+        notice.setTextSize(13); notice.setPadding(0, space / 2, 0, space); content.addView(notice);
+        for (String[] field : fields) {
+            TextView label = new TextView(this); label.setText(field[1]); label.setTextSize(12);
+            label.setTextColor(getColor(R.color.clinical)); label.setTypeface(null, android.graphics.Typeface.BOLD);
+            content.addView(label);
+            TextView text = new TextView(this); text.setText(value(bank, field[0])); text.setTextSize(16);
+            text.setTextIsSelectable(true); text.setPadding(0, 2, 0, space / 2); content.addView(text);
+        }
+        ScrollView scroll = new ScrollView(this); scroll.addView(content);
+        detailDialog = new AlertDialog.Builder(this).setTitle(R.string.bank_information).setView(scroll)
+                .setPositiveButton(R.string.close, null).create();
+        detailDialog.show();
     }
 
-    @Override protected void onDestroy() { executor.shutdownNow(); super.onDestroy(); }
+    @Override protected void onDestroy() { if (detailDialog != null) detailDialog.dismiss(); executor.shutdownNow(); super.onDestroy(); }
 }
 

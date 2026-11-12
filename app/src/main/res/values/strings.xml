@@ -35,4 +35,14 @@
     <string name="generic_error">No fue posible completar la consulta.</string>
     <string name="missing">No reportado</string>
     <string name="close">Cerrar</string>
+    <string name="health_directory">DIRECTORIO DE SALUD</string>
+    <string name="search_directory">Busca en el directorio</string>
+    <string name="department_label">Departamento</string>
+    <string name="city_label">Ciudad</string>
+    <string name="view_information">Ver información ›</string>
+    <string name="bank_information">Información del establecimiento</string>
+    <string name="detail_notice">Datos del directorio público de INVIMA. Confirma los servicios y la disponibilidad con el establecimiento.</string>
+    <string name="all_locations">Todos</string>
+    <string name="edit_filters">Modificar filtros</string>
+    <string name="hide_filters">Ocultar filtros</string>
 </resources>

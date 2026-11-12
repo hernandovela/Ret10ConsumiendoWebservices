@@ -28,7 +28,7 @@ public class LocationPicker extends Button {
 
     public void setOptions(List<String> values) {
         options.clear(); options.addAll(values); selection = 0;
-        setText(options.isEmpty() ? "" : options.get(0));
+        setText(options.isEmpty() ? "" : getContext().getString(R.string.all_locations));
         if (onSelectionChanged != null) onSelectionChanged.run();
     }
 
@@ -40,7 +40,7 @@ public class LocationPicker extends Button {
 
     public void setSelection(int position) {
         if (position < 0 || position >= options.size() || selection == position) return;
-        selection = position; setText(options.get(position));
+        selection = position; setText(position == 0 ? getContext().getString(R.string.all_locations) : options.get(position));
         if (onSelectionChanged != null) onSelectionChanged.run();
     }
 
