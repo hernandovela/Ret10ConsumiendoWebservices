@@ -1,102 +1,185 @@
-# Reto 10: Consumiendo Webservices
+# Bancos de Sangre de Colombia · Reto 10
 
-Proyecto educativo Android en Java y XML, desarrollado para estudiar el consumo de datos abiertos colombianos. Contexto académico indicado por el solicitante: maestría de la Universidad Nacional de Colombia. No es una aplicación oficial de la Universidad ni de INVIMA.
+Aplicación educativa Android en **Java y XML** que consulta el conjunto público de bancos de sangre de Colombia y permite buscar establecimientos por nombre, departamento y ciudad.
 
-## Relación con el enunciado
+**Versión:** 1.1.2 · **Estado de validación:** 12 de noviembre de 2026.
 
-| Requisito | Implementación |
+Desarrollada en el contexto académico de una maestría de la Universidad Nacional de Colombia indicado por el solicitante. No representa una aplicación oficial de la Universidad ni de INVIMA.
+
+## Funcionalidades
+
+- Nombre del banco con escritura parcial y selección de sugerencias del catálogo.
+- Departamento y ciudad mediante botones selectores con listas de opciones.
+- Ciudades y sugerencias de bancos vinculadas a la ubicación elegida.
+- Opción Todos para omitir un filtro de ubicación; nombre vacío para consultar todos los bancos.
+- Botón **Limpiar** para restablecer campos y retirar resultados anteriores.
+- Consulta al servidor mediante **Buscar bancos** o la acción **Listo** del teclado.
+- Listado de resultados y detalle de cada establecimiento.
+- Fecha de actualización de la fuente obtenida de sus metadatos.
+- Mensajes de carga, ausencia de resultados, error de conexión y rechazo del servicio.
+
+Al cambiar de departamento se restablecen ciudad y nombre; al cambiar de ciudad se restablece el nombre. Así se evita conservar selecciones anteriores incompatibles con la ubicación.
+
+## Cumplimiento del reto académico
+
+| Requisito del enunciado | Implementación |
 | --- | --- |
-| Consumir un servicio del catálogo colombiano | SODA3 mediante POST con token; SODA2 público mediante GET sin token, conjunto `kwki-6kd6` |
-| Enviar parámetros desde la interfaz | Selección de banco, departamento y ciudad mediante listas; cláusulas SoQL enviadas al servidor |
-| Presentar la respuesta | Listado y detalle de cada banco |
-| Procesar con objetos JSON del SDK | `JSONObject` para solicitud/registros y `JSONArray` para respuesta |
+| Consumir un servicio del catálogo colombiano | Conjunto `kwki-6kd6` de datos.gov.co |
+| Enviar parámetros desde una interfaz gráfica | Filtros de nombre, departamento y ciudad enviados mediante SoQL |
+| Presentar la respuesta del servicio | Listado y diálogo de detalle |
+| Procesar JSON con objetos del SDK Android | `JSONObject` y `JSONArray`, sin bibliotecas externas de serialización |
 
-El ejemplo de puntos posconsumo del PDF no es obligatorio. Se utiliza el conjunto de bancos de sangre elegido por el solicitante.
+El conjunto de puntos posconsumo descrito en el enunciado es un ejemplo. Este proyecto utiliza los bancos de sangre seleccionados para el ejercicio.
 
-## Herramientas
+## Requisitos técnicos
 
-- Android Studio, SDK 36 y JDK compatible con Android Gradle Plugin 9.1.0.
-- Gradle 9.5.0 mediante el wrapper del proyecto.
-- Android 8.0 (API 26) o superior.
-- Sin bibliotecas externas para HTTP ni JSON.
+| Componente | Configuración |
+| --- | --- |
+| Lenguaje e interfaz | Java y vistas XML |
+| Android mínimo | Android 8.0, API 26 |
+| SDK de compilación y destino | API 36 |
+| Android Gradle Plugin | 9.1.0 |
+| Gradle | 9.5.0, incluido mediante wrapper |
+| Compatibilidad del código Java | Java 17 |
+| Entorno JDK utilizado en la validación | JBR 25 incluido en Android Studio |
+| Permiso requerido | Internet |
 
-## Configuración local
+Se necesita Android Studio, el SDK correspondiente y conexión a Internet. La primera sincronización de Gradle puede requerir descargar dependencias.
 
-1. Abrir la carpeta del proyecto en Android Studio.
-2. Copiar `local.properties.example` a `local.properties`.
-3. Ajustar `sdk.dir`. Dejar `socrata.app.token` vacío para SODA2 público, o completar un token válido para SODA3.
-4. Sincronizar Gradle y ejecutar `app` en un emulador o dispositivo.
+## Abrir y ejecutar
 
-`local.properties` está excluido de Git. El token se incorpora al APK a través de BuildConfig: un APK puede inspeccionarse, así que debe usarse un token de aplicación apropiado para clientes públicos, nunca una contraseña ni un secreto de cuenta. Cambiar el token requiere recompilar. No registrar el token en capturas ni documentación.
+1. Clonar o descargar este repositorio y abrir su carpeta raíz en Android Studio.
+2. Configurar el SDK local. Android Studio puede generar `local.properties`; también se puede usar `local.properties.example` como referencia.
+3. Elegir el modo de acceso a la API según la sección siguiente.
+4. Sincronizar Gradle y seleccionar el módulo **app**.
+5. Iniciar un emulador o conectar un dispositivo con API 26 o superior y ejecutar **Run**.
 
-Documentación para registrar tokens: https://dev.socrata.com/docs/app-tokens.html
+Para compilar desde PowerShell, ubicado en la raíz del proyecto:
 
-SODA3 fue validado el 12/11/2026 con token local: respuesta HTTP 200 y conjunto de pruebas completo correcto. Ver [resultado de las pruebas SODA3](docs/pruebas/resultado-soda3.txt). El repositorio conserva únicamente la configuración de ejemplo, sin el token.
+```powershell
+.\gradlew.bat assembleDebug
+```
 
-## Flujo de la consulta
+El APK debug queda en `app/build/outputs/apk/debug/app-debug.apk`. Los archivos generados de compilación no se versionan.
 
-`MainActivity` recoge filtros y construye SoQL mediante `BloodBankService.query`. Un `ExecutorService` ejecuta la petición fuera del hilo de interfaz. Con token, el servicio serializa un `JSONObject` y envía POST al endpoint SODA3 solicitado. Sin token, envía GET con `$query` codificado a SODA2 del mismo conjunto. Ambos caminos procesan el arreglo con `JSONArray` y cada registro con `JSONObject`. La actividad muestra el resultado en el hilo principal. Cada registro abre un diálogo desplazable con el detalle.
+## Configuración del token y modos de acceso
 
-La alternativa SODA2 fue autorizada por el solicitante después de comprobar que SODA3 responde `403 authentication_required` sin token. No se cambia a SODA2 ante un token inválido: se informa el rechazo para que el error de configuración sea visible. La app funciona con datos reales sin registrar una cuenta.
+El código selecciona el modo al compilar, según `socrata.app.token` en el archivo **local.properties de la carpeta que se está abriendo en Android Studio**.
 
-El nombre del banco admite escritura parcial y selección de sugerencias con `AutoCompleteTextView`. La flecha abre la lista sin exigir escribir. Departamento y ciudad usan listas de selección con una opción Todos. Al iniciar, la app obtiene las opciones reales del catálogo, ordenadas y sin duplicados. Las ciudades y sugerencias de bancos dependen de la ubicación elegida. Cambiar el departamento restablece ciudad y nombre; cambiar la ciudad restablece el nombre, evitando conservar selecciones incompatibles.
+| Configuración | Modo utilizado |
+| --- | --- |
+| Token válido configurado | SODA3: POST al endpoint solicitado, con cabecera `X-App-Token` |
+| Propiedad ausente o vacía | SODA2: GET público sobre el mismo conjunto de datos |
+| Token configurado pero rechazado | Se informa el error HTTP; no se cambia silenciosamente a SODA2 |
 
-El botón Limpiar vacía el nombre, restablece las ubicaciones, retira resultados anteriores y oculta el teclado. Buscar bancos o la acción Listo del teclado envían la consulta al servicio. Si falla la carga inicial, el botón permite reintentar.
+### Habilitar SODA3
 
-El nombre usa coincidencia parcial y la ubicación usa igualdad sin distinguir mayúsculas. Los apóstrofes se escapan como literales SoQL. Los campos y el orden de consulta son fijos, no se acepta SQL arbitrario desde la interfaz. La carga de opciones tiene el mismo límite documentado de 1000 registros del catálogo.
+1. Iniciar sesión en el portal Socrata y abrir **Developer Settings → Create New App Token**. Consultar la [guía oficial de tokens](https://support.socrata.com/hc/en-us/articles/210138558-Generating-App-Tokens-and-API-Keys).
+2. Conservar la configuración `sdk.dir` existente en `local.properties`.
+3. Agregar la propiedad `socrata.app.token` y colocar después de `=` únicamente el valor del App Token generado: sin comillas, etiquetas ni texto de ejemplo añadido.
+4. Guardar, sincronizar Gradle y volver a compilar y ejecutar la app.
 
-### Versión y fecha de los datos
+Para usar SODA2, la propiedad debe quedar vacía:
 
-La versión de la aplicación es **1.1.2** (`versionCode=4`). La fecha que aparece junto a ella se obtiene en cada inicio del campo oficial `rowsUpdatedAt` del endpoint de metadatos, convirtiendo los segundos Unix a la zona `America/Bogota`. El 11/11/2026 la fuente reportó actualización de filas el **10/11/2026**. No se usa la fecha de instalación ni la fecha de cambios del código como fecha de los datos. Si los metadatos no están disponibles, se muestra fecha no disponible y la búsqueda sigue habilitada.
+```properties
+socrata.app.token=
+```
 
-La versión 1.1.2 reemplaza los selectores de ubicación por `LocationPicker`, un botón estándar que abre una lista con selección actual y Cancelar. Se elimina la dependencia de Spinner y sus interceptores. La prueba de regresión ahora recorre eventos DOWN/UP sobre texto y flecha, selecciona y reabre, con nombre escrito y después de Limpiar. El plan, límites y salida reproducible están en [el informe de regresión](docs/pruebas/REGRESION_SELECTORES.md).
+No se requiere configurar contraseña ni API Secret. `local.properties` está excluido de Git. El token se incorpora al APK mediante BuildConfig, de modo que no debe considerarse un secreto irrecuperable dentro de una aplicación distribuida. No se publican el token ni el APK que lo incorpora.
 
-Ejemplo del cuerpo de consulta SODA3 (el token se envía en la cabecera `X-App-Token`):
+**SODA3 fue validado el 12/11/2026:** respuesta directa HTTP 200 y conjunto completo de pruebas correcto. El repositorio incluye [la salida de validación sin credenciales](docs/pruebas/resultado-soda3.txt); cada persona debe configurar su propio token local.
+
+## Origen de los datos y consultas
+
+La app consume directamente la API de datos.gov.co. No extrae información de la página visual ni presenta registros simulados como datos reales.
+
+- [Catálogo del conjunto](https://www.datos.gov.co/Salud-y-Protecci-n-Social/BANCOS-DE-SANGRE-EN-FUNCIONAMIENTO-EN-EL-PA-S/kwki-6kd6/about_data).
+- [Endpoint SODA3](https://www.datos.gov.co/api/v3/views/kwki-6kd6/query.json).
+- [Endpoint público SODA2](https://www.datos.gov.co/resource/kwki-6kd6.json).
+- [Metadatos del conjunto](https://www.datos.gov.co/api/views/kwki-6kd6.json).
+- [Documentación del conjunto](https://dev.socrata.com/foundry/www.datos.gov.co/kwki-6kd6).
+- [Documentación de consultas SODA3](https://dev.socrata.com/docs/queries/).
+
+Al iniciar se consultan las opciones del catálogo y sus metadatos. Al pulsar Buscar bancos se hace una nueva petición al servicio con los filtros elegidos.
+
+El nombre usa coincidencia parcial sin distinguir mayúsculas. Departamento y ciudad usan igualdad sin distinguir mayúsculas. Se escapan los apóstrofes de los valores enviados. Los campos y el orden de consulta están definidos en el código.
+
+Ejemplo del cuerpo JSON de una consulta SODA3; el token se envía en la cabecera y no en este cuerpo:
 
 ```json
 {
   "query": "SELECT * WHERE upper(departamento) = upper('ANTIOQUIA') ORDER BY bancodesangre, numero_de_consecutivo",
-  "page": {"pageNumber": 1, "pageSize": 1000},
+  "page": { "pageNumber": 1, "pageSize": 1000 },
   "includeSynthetic": false
 }
 ```
 
-Sin token se utiliza `https://www.datos.gov.co/resource/kwki-6kd6.json?$query=...`, codificando la misma consulta con `URLEncoder` y agregando `LIMIT 1000`.
+En SODA2 se codifica la consulta mediante `URLEncoder`, se envía en `$query` y se agrega `LIMIT 1000`.
 
-La consulta limita la página a 1000 filas; la interfaz lo informa si se alcanza ese tamaño. No se implementa caché ni se presentan datos simulados como reales. Se informa ausencia de resultados, errores de red, tiempos de espera y rechazo HTTP.
+## Versión de la app y fecha de los datos
 
-## Verificación académica
+La versión **1.1.2** identifica el código de la app (`versionCode=4`). La fecha mostrada junto a ella identifica la actualización de los registros de la fuente: se obtiene del campo `rowsUpdatedAt`, expresado en segundos Unix, y se presenta en la zona **America/Bogota**.
 
-- Consultar sin filtros y abrir un detalle.
-- Filtrar por departamento y ciudad con valores existentes y contrastar con el catálogo.
-- Escribir un nombre inexistente y comprobar el estado sin resultados.
-- Cambiar de departamento y comprobar que solo se ofrezcan ciudades y bancos de ese departamento.
-- Pulsar Limpiar y comprobar el restablecimiento de campos y resultados.
-- Desactivar Internet y verificar el mensaje de error y la posibilidad de reintentar.
-- Compilar sin token y verificar el indicador de SODA2 público y la consulta real.
-- Usar un token inválido y comprobar el rechazo del servicio.
-- Girar el dispositivo durante una consulta y comprobar que no se produce un cierre inesperado. Una recreación de la actividad permite repetir la consulta; no se conserva la respuesta anterior.
+Durante las verificaciones la fuente reportó **10/11/2026**. Esa fecha se consulta al iniciar y puede cambiar con las actualizaciones del conjunto. No corresponde a la instalación ni a la compilación de la app. Si los metadatos no están disponibles, se muestra fecha no disponible y la búsqueda sigue habilitada.
 
-Estas son instrucciones de verificación, no evidencia de que las pruebas ya se hayan ejecutado. El resultado real se registra en `VALIDACION.md`.
+## Organización del código
 
-### Pruebas automatizadas en un emulador
+| Archivo o carpeta | Responsabilidad |
+| --- | --- |
+| `MainActivity.java` | Interfaz, coordinación de consultas, filtros dependientes y detalle |
+| `BloodBankService.java` | Construcción de SoQL, HTTP, modos SODA3/SODA2, JSON y metadatos |
+| `LocationPicker.java` | Botón selector estándar que abre una lista con selección actual y Cancelar |
+| `app/src/main/res/layout/` | Vistas XML del formulario y las sugerencias |
+| `EducationalTestRunner.java` | Pruebas instrumentadas sobre Android |
+| `docs/pruebas/` | Matriz, procedimiento y resultados de ejecución |
+| `docs/evidencias/` | Capturas de las versiones verificadas |
+
+Las operaciones de red se ejecutan en un `ExecutorService`, fuera del hilo principal. La actividad actualiza la interfaz en el hilo principal. El procesamiento utiliza los objetos JSON proporcionados por Android.
+
+## Pruebas y evidencias
+
+La versión 1.1.2 sustituyó los selectores basados en Spinner por `LocationPicker`, que hereda de Button. La regresión comprueba el recorrido DOWN/UP sobre el centro y la flecha de cada campo, además de selección, reapertura, cancelación y limpieza.
+
+| Validación ejecutada | Resultado registrado |
+| --- | --- |
+| Compilación de app y APK de pruebas | Correcta |
+| Android Lint | No issues found |
+| Ocho aperturas mediante eventos DOWN/UP | PASS |
+| Selección y conservación del valor al reabrir | PASS |
+| Nombre completo y parcial, Limpiar y ciudades dependientes | PASS |
+| Consulta SODA3 con token local | HTTP 200 |
+| Consulta real sin filtros | 85 registros durante la ejecución |
+| Consulta real con ubicación del primer registro | 4 registros durante la ejecución |
+| Nombre inexistente con apóstrofe | 0 registros |
+
+La cantidad de registros puede variar con la fuente. Los eventos automatizados se despachan dentro de la app; la comprobación manual con el ratón del emulador se documenta por separado.
+
+- [Plan y matriz de regresión, alcance y capturas](docs/pruebas/REGRESION_SELECTORES.md).
+- [Salida del conjunto en SODA2](docs/pruebas/resultado-v1.1.2.txt).
+- [Salida de la repetición en SODA3](docs/pruebas/resultado-soda3.txt).
+- [Registro general de validación y antecedentes](VALIDACION.md).
+
+### Repetir el conjunto en Windows
+
+Con un emulador iniciado y desde la raíz del proyecto:
 
 ```powershell
 .\gradlew.bat assembleDebug assembleDebugAndroidTest lintDebug
-adb install -r app/build/outputs/apk/debug/app-debug.apk
-adb install -r app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk
-adb shell am instrument -w co.edu.unal.reto10.test/co.edu.unal.reto10.EducationalTestRunner
+$adb = Join-Path $env:LOCALAPPDATA 'Android/Sdk/platform-tools/adb.exe'
+& $adb devices
+& $adb install -r app/build/outputs/apk/debug/app-debug.apk
+& $adb install -r app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk
+& $adb shell am instrument -w co.edu.unal.reto10.test/co.edu.unal.reto10.EducationalTestRunner
 ```
 
-El runner usa `Instrumentation` del SDK y comprueba apertura visible de los diálogos de Departamento y Ciudad con hospital escrito, sugerencias reales, entrada de nombre completo y parcial, resultados, Limpiar, ciudades por departamento, fecha publicada y consultas reales con/sin resultados. La apertura por clic físico y la selección táctil de sugerencias se revisan visualmente en el emulador. Requiere Internet y acceso al servicio. El modo SODA3 requiere configurar el token antes de compilar.
+Si hay varios dispositivos, agregar `-s` y su identificador a las llamadas de adb. El conjunto requiere acceso a Internet y al servicio. Para probar SODA3 se debe configurar el token antes de compilar. Cualquier salida FAIL, Process crashed o INSTRUMENTATION_FAILED indica fallo, aunque adb termine con código de salida 0.
 
-## Fuentes
+## Límites del ejercicio
 
-- Catálogo: https://www.datos.gov.co/Salud-y-Protecci-n-Social/BANCOS-DE-SANGRE-EN-FUNCIONAMIENTO-EN-EL-PA-S/kwki-6kd6/about_data
-- Endpoint solicitado: https://www.datos.gov.co/api/v3/views/kwki-6kd6/query.json
-- Metadatos de campos: https://www.datos.gov.co/api/views/kwki-6kd6.json
-- Documentación del conjunto: https://dev.socrata.com/foundry/www.datos.gov.co/kwki-6kd6
-- SODA3: https://dev.socrata.com/docs/queries/
-- Endpoint público SODA2 autorizado: https://www.datos.gov.co/resource/kwki-6kd6.json
+- Se consulta una página de hasta 1000 filas; el mismo límite aplica al catálogo de opciones. La interfaz informa cuando el resultado alcanza ese tamaño.
+- No se implementa caché persistente ni un modo de datos simulados.
+- Al recrear la actividad no se conserva la respuesta anterior; puede repetirse la consulta.
+- Se probó en Small_Phone con API 37.1; no se verificó en dispositivos físicos ni en todas las versiones Android admitidas.
+- El informe distingue las pruebas ejecutadas de los casos que no se probaron, como pérdida de conectividad y rotación durante una petición.
 
-Los datos pertenecen a la fuente pública. La aplicación no verifica disponibilidad de unidades de sangre ni reemplaza la consulta directa con los establecimientos.
+Los registros pertenecen a la fuente pública. El directorio no indica disponibilidad de unidades de sangre ni reemplaza la consulta directa con los establecimientos.
