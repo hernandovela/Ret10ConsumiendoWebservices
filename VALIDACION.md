@@ -54,7 +54,7 @@ Las capturas siguientes corresponden a la primera versión y documentan la prese
 
 ## Alcance y límites
 
-La alternativa SODA2 fue autorizada por el solicitante. Se usa el mismo conjunto `kwki-6kd6`, sin datos simulados. SODA3 permanece implementado y se selecciona cuando hay un token local; su ejecución autenticada no ha sido validada porque no se dispone de un token de la cuenta del solicitante.
+La alternativa SODA2 fue autorizada por el solicitante. Se usa el mismo conjunto `kwki-6kd6`, sin datos simulados. El 12/11/2026 se corrigió un prefijo de ejemplo añadido al token en local.properties de Android Studio. La petición directa a SODA3 devolvió HTTP 200 y la app se recompiló con esa configuración. El conjunto completo pasó también por SODA3: ocho aperturas DOWN/UP, selección/reapertura, limpieza, filtros y consultas reales (85 registros sin filtros, 4 filtrados y 0 inexistentes). Compilación y Lint correctos. [Salida SODA3 sin credenciales](docs/pruebas/resultado-soda3.txt).
 
 No se ejecutaron pruebas de pérdida de conectividad, rotación durante una petición ni pruebas en dispositivos físicos. La cantidad de registros puede cambiar con las actualizaciones de la fuente.
 

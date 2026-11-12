@@ -65,4 +65,10 @@ En el APK 1.1.2, compilado desde la carpeta de Android Studio e instalado despu�
 
 ## Límites de la validación
 
-No se probó en dispositivo físico ni en todas las versiones de Android soportadas. Las pruebas con datos reales requieren conectividad y disponibilidad del servicio. La cantidad de registros y sus fechas pueden cambiar. SODA3 autenticado continúa pendiente de un token local válido.
+No se probó en dispositivo físico ni en todas las versiones de Android soportadas. Las pruebas con datos reales requieren conectividad y disponibilidad del servicio. La cantidad de registros y sus fechas pueden cambiar.
+
+## Repetición con SODA3 y token local
+
+El 12/11/2026 se verificó el token local tras retirar un prefijo de ejemplo. La consulta directa al endpoint SODA3 respondió HTTP 200 con un arreglo JSON. Se compiló desde la carpeta de Android Studio con el token y se instalaron ambos APK. El mismo conjunto terminó con PASS para las ocho aperturas táctiles, selección/reapertura, limpieza, filtros, fecha y API real. Resultados: 85 registros, 4 filtrados y 0 inexistentes. Android Lint: No issues found. [Salida completa de la repetición](resultado-soda3.txt).
+
+El token permanece en local.properties, excluido de Git. No se incluye en este informe ni se publica el APK que lo incorpora.

@@ -1,0 +1,9 @@
+Modo validado: SODA3 con token local.
+Verificación directa del endpoint: HTTP 200.
+Token omitido de este informe.
+
+
+PASS: Departamento y Ciudad, centro y flecha, nombre escrito, después de Limpiar, seleccionar y reabrir (8 aperturas por DOWN/UP).
+PASS: sugerencias, nombre completo/parcial, Limpiar, ciudades dependientes y fecha de fuente.
+PASS: API real. Total=85; filtrados=4; inexistentes=0
+

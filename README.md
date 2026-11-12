@@ -31,6 +31,8 @@ El ejemplo de puntos posconsumo del PDF no es obligatorio. Se utiliza el conjunt
 
 Documentación para registrar tokens: https://dev.socrata.com/docs/app-tokens.html
 
+SODA3 fue validado el 12/11/2026 con token local: respuesta HTTP 200 y conjunto de pruebas completo correcto. Ver [resultado de las pruebas SODA3](docs/pruebas/resultado-soda3.txt). El repositorio conserva únicamente la configuración de ejemplo, sin el token.
+
 ## Flujo de la consulta
 
 `MainActivity` recoge filtros y construye SoQL mediante `BloodBankService.query`. Un `ExecutorService` ejecuta la petición fuera del hilo de interfaz. Con token, el servicio serializa un `JSONObject` y envía POST al endpoint SODA3 solicitado. Sin token, envía GET con `$query` codificado a SODA2 del mismo conjunto. Ambos caminos procesan el arreglo con `JSONArray` y cada registro con `JSONObject`. La actividad muestra el resultado en el hilo principal. Cada registro abre un diálogo desplazable con el detalle.
