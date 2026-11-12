@@ -11,7 +11,7 @@ import android.widget.Button;
 import java.util.ArrayList;
 import java.util.List;
 
-/** Botón de selección: usa el recorrido táctil estándar de Button, sin Spinner ni hijos que capturen el toque. */
+/** BotÃ³n de selecciÃ³n: usa el recorrido tÃ¡ctil estÃ¡ndar de Button, sin Spinner ni hijos que capturen el toque. */
 public class LocationPicker extends Button {
     private final List<String> options = new ArrayList<>();
     private int selection;
@@ -23,6 +23,8 @@ public class LocationPicker extends Button {
         setAllCaps(false);
         setGravity(android.view.Gravity.CENTER_VERTICAL | android.view.Gravity.START);
         setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, android.R.drawable.arrow_down_float, 0);
+        android.graphics.drawable.Drawable arrow = getCompoundDrawablesRelative()[2];
+        if (arrow != null) arrow.setTint(getResources().getColor(R.color.ink, context.getTheme()));
         setOnClickListener(view -> openOptions());
     }
 

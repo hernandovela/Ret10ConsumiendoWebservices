@@ -2,13 +2,13 @@
 
 Aplicación educativa Android en **Java y XML** que consulta el conjunto público de bancos de sangre de Colombia y permite buscar establecimientos por nombre, departamento y ciudad.
 
-**Versión:** 1.2.0 · **Estado de validación:** 12 de noviembre de 2026.
+**Versión:** 1.2.1 · **Estado de validación:** 12 de noviembre de 2026.
 
 Desarrollada en el contexto académico de una maestría de la Universidad Nacional de Colombia indicado por el solicitante. No representa una aplicación oficial de la Universidad ni de INVIMA.
 
-## Diseño médico · versión 1.2.0
+## Diseño médico · versión 1.2.1
 
-Diseño aprobado por el solicitante antes de instalar la nueva versión. La interfaz utiliza azul clínico, fondo claro, un símbolo de sangre y tarjetas con iconos de establecimientos de salud. Se mantienen Java, XML y componentes del SDK Android.
+Diseño aprobado por el solicitante antes de instalar la nueva versión. La interfaz utiliza el tema oscuro aprobado: fondo azul profundo, superficies azul pizarra, acento cian y un símbolo de sangre y tarjetas con iconos de establecimientos de salud. Se mantienen Java, XML y componentes del SDK Android.
 
 - Formulario agrupado con nombre editable y sugerencias, ubicación en dos columnas y acción Limpiar.
 - Los campos de ubicación muestran **Todos** para omitir el filtro; los diálogos conservan las etiquetas completas y la selección actual.
@@ -18,7 +18,7 @@ Diseño aprobado por el solicitante antes de instalar la nueva versión. La inte
 
 | Inicio | Resultados | Detalle |
 | --- | --- | --- |
-| ![Formulario médico](docs/evidencias/09-inicio-v1.2.0.png) | ![Tarjetas y filtros contraídos](docs/evidencias/12-resultados-v1.2.0.png) | ![Ficha del establecimiento](docs/evidencias/13-detalle-v1.2.0.png) |
+| ![Formulario médico](docs/evidencias/14-inicio-oscuro-v1.2.1.png) | ![Tarjetas y filtros contraídos](docs/evidencias/16-resultados-oscuros-v1.2.1.png) | ![Ficha del establecimiento](docs/evidencias/17-detalle-oscuro-v1.2.1.png) |
 
 ## Funcionalidades
 
@@ -132,7 +132,7 @@ En SODA2 se codifica la consulta mediante `URLEncoder`, se envía en `$query` y 
 
 ## Versión de la app y fecha de los datos
 
-La versión **1.2.0** identifica el código de la app (`versionCode=5`). La fecha mostrada junto a ella identifica la actualización de los registros de la fuente: se obtiene del campo `rowsUpdatedAt`, expresado en segundos Unix, y se presenta en la zona **America/Bogota**.
+La versión **1.2.1** identifica el código de la app (`versionCode=6`). La fecha mostrada junto a ella identifica la actualización de los registros de la fuente: se obtiene del campo `rowsUpdatedAt`, expresado en segundos Unix, y se presenta en la zona **America/Bogota**.
 
 Durante las verificaciones la fuente reportó **10/11/2026**. Esa fecha se consulta al iniciar y puede cambiar con las actualizaciones del conjunto. No corresponde a la instalación ni a la compilación de la app. Si los metadatos no están disponibles, se muestra fecha no disponible y la búsqueda sigue habilitada.
 
@@ -151,6 +151,9 @@ Durante las verificaciones la fuente reportó **10/11/2026**. Esa fecha se consu
 Las operaciones de red se ejecutan en un `ExecutorService`, fuera del hilo principal. La actividad actualiza la interfaz en el hilo principal. El procesamiento utiliza los objetos JSON proporcionados por Android.
 
 ## Pruebas y evidencias
+
+**Corrección 1.2.1:** se igualó la paleta con la variante oscura de la propuesta aprobada, también en sugerencias, selectores y detalle. El tema oscuro es fijo, independiente del modo del dispositivo. La regresión incorpora aserciones para los colores de fondo, superficies y acción principal. [Validación y capturas de la corrección](docs/pruebas/COLORES_V1.2.1.md) · [Salida del runner](docs/pruebas/resultado-v1.2.1.txt).
+
 
 **Validación de 1.2.0, 12/11/2026:** compilación e instalación correctas; regresión instrumentada por SODA3 con token local: PASS. Incluye ocho aperturas DOWN/UP de ubicación, filtros dependientes, nombre completo/parcial, Limpiar, fecha, tarjetas, contraer/reabrir filtros y abrir/cerrar detalle. La fuente devolvió 85 registros, 4 filtrados y 0 inexistentes. Revisión manual con ratón en Small_Phone y cinco capturas actualizadas.
 

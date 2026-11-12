@@ -21,11 +21,11 @@ public class EducationalTestRunner extends Instrumentation {
         Bundle result = new Bundle();
         Activity activity = null;
         try {
-            String query = BloodBankService.query("O'Brien", "Antioquia", "Medellín");
-            check(query.contains("O''Brien"), "Apóstrofes escapados en SoQL");
+            String query = BloodBankService.query("O'Brien", "Antioquia", "MedellÃ­n");
+            check(query.contains("O''Brien"), "ApÃ³strofes escapados en SoQL");
             check(query.contains("upper(departamento) = upper('Antioquia')"), "Filtro de departamento enviado");
-            check(query.contains("upper(ciudad) = upper('Medellín')"), "Filtro de ciudad enviado");
-            check(!BloodBankService.query("", "", "").contains("WHERE"), "Consulta sin filtros válida");
+            check(query.contains("upper(ciudad) = upper('MedellÃ­n')"), "Filtro de ciudad enviado");
+            check(!BloodBankService.query("", "", "").contains("WHERE"), "Consulta sin filtros vÃ¡lida");
             activity = startActivitySync(new Intent(getTargetContext(), MainActivity.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
             waitForIdleSync();
             Activity current = activity;
@@ -63,7 +63,7 @@ public class EducationalTestRunner extends Instrumentation {
                 int index = -1;
                 for (int i = 0; i < bankSelector.getAdapter().getCount(); i++)
                     if (bankName.equals(bankSelector.getAdapter().getItem(i))) index = i;
-                check(index >= 0, "El banco real está disponible para seleccionar");
+                check(index >= 0, "El banco real estÃ¡ disponible para seleccionar");
                 bankSelector.setText(bankName, false);
             });
             waitForIdleSync();
@@ -71,7 +71,7 @@ public class EducationalTestRunner extends Instrumentation {
             waitUntil(() -> ((Button) current.findViewById(R.id.search)).isEnabled());
             onMain(() -> {
                 ListView rows = current.findViewById(R.id.list);
-                check(rows.getCount() > 0, "La selección genera resultados en la interfaz");
+                check(rows.getCount() > 0, "La selecciÃ³n genera resultados en la interfaz");
                 for (int i = 0; i < rows.getCount(); i++)
                     check(bankName.equals(((Map<?, ?>) rows.getItemAtPosition(i)).get("title")), "Solo aparece el banco seleccionado");
             });
@@ -83,16 +83,19 @@ public class EducationalTestRunner extends Instrumentation {
                 ListView rows = current.findViewById(R.id.list);
                 android.view.View row = rows.getAdapter().getView(0, null, rows);
                 check(row.findViewById(android.R.id.text1) != null && row.findViewById(android.R.id.text2) != null,
-                        "Tarjeta médica contiene nombre y ubicación");
+                        "Tarjeta mÃ©dica contiene nombre y ubicaciÃ³n");
                 rows.performItemClick(row, 0, rows.getAdapter().getItemId(0));
             });
             waitForIdleSync();
             onMain(() -> {
                 android.app.AlertDialog detail = ((MainActivity) current).getDetailDialog();
-                check(detail != null && detail.isShowing(), "La tarjeta abre información del establecimiento");
+                check(detail != null && detail.isShowing(), "La tarjeta abre informaciÃ³n del establecimiento");
                 detail.getButton(android.content.DialogInterface.BUTTON_POSITIVE).performClick();
 
-                check(BuildConfig.VERSION_NAME.equals("1.2.0"), "Versión 1.2.0 instalada");
+                check(current.getColor(R.color.canvas) == android.graphics.Color.parseColor("#101D27"), "Fondo igual a la propuesta oscura");
+                check(current.getColor(R.color.surface) == android.graphics.Color.parseColor("#1B2C38"), "Tarjetas iguales a la propuesta");
+                check(current.getColor(R.color.clinical) == android.graphics.Color.parseColor("#74CCE0"), "Acción primaria igual a la propuesta");
+                check(BuildConfig.VERSION_NAME.equals("1.2.1"), "VersiÃ³n 1.2.1 instalada");
             });
             waitForIdleSync();
             onMain(() -> check(!((MainActivity) current).getDetailDialog().isShowing(), "Cerrar regresa al listado"));
@@ -119,7 +122,7 @@ public class EducationalTestRunner extends Instrumentation {
                     }
                     check(belongs, "Ciudades restringidas al departamento");
                 }
-                check(((TextView) current.findViewById(R.id.service_mode)).getText().toString().matches(".*\\d{2}/\\d{2}/\\d{4}.*"), "Fecha real de actualización visible");
+                check(((TextView) current.findViewById(R.id.service_mode)).getText().toString().matches(".*\\d{2}/\\d{2}/\\d{4}.*"), "Fecha real de actualizaciÃ³n visible");
                 current.findViewById(R.id.clear).performClick();
                 ((AutoCompleteTextView) current.findViewById(R.id.name)).setText("BANCO", false);
             });
@@ -128,7 +131,7 @@ public class EducationalTestRunner extends Instrumentation {
             waitUntil(() -> ((Button) current.findViewById(R.id.search)).isEnabled());
             onMain(() -> {
                 ListView rows = current.findViewById(R.id.list);
-                check(rows.getCount() > 0, "Búsqueda por texto parcial disponible");
+                check(rows.getCount() > 0, "BÃºsqueda por texto parcial disponible");
                 for (int i = 0; i < rows.getCount(); i++) check(((Map<?, ?>) rows.getItemAtPosition(i)).get("title").toString().contains("BANCO"), "Coincidencia parcial enviada al servicio");
             });
             JSONArray filtered = service.fetch(BloodBankService.query("", department, city));
@@ -138,10 +141,10 @@ public class EducationalTestRunner extends Instrumentation {
                 check(filtered.getJSONObject(i).getString("ciudad").equalsIgnoreCase(city), "Ciudad filtrada correctamente");
             }
             JSONArray empty = service.fetch(BloodBankService.query("ZZZ_RETO10_INEXISTENTE_O'Brien", "", ""));
-            check(empty.length() == 0, "Sin resultados y apóstrofe aceptado por el servidor");
-            result.putString("stream", "\nPASS: Departamento y Ciudad, centro y flecha, nombre escrito, después de Limpiar, seleccionar y reabrir (8 aperturas por DOWN/UP)."
+            check(empty.length() == 0, "Sin resultados y apÃ³strofe aceptado por el servidor");
+            result.putString("stream", "\nPASS: Departamento y Ciudad, centro y flecha, nombre escrito, despuÃ©s de Limpiar, seleccionar y reabrir (8 aperturas por DOWN/UP)."
                     + "\nPASS: sugerencias, nombre completo/parcial, Limpiar, ciudades dependientes y fecha de fuente."
-                    + "\nPASS: versión 1.2.0, tarjeta con nombre/ubicación, contraer/reabrir filtros, abrir detalle y cerrar. Contexto médico sin cambiar selectores."
+                    + "\nPASS: versiÃ³n 1.2.1, tarjeta con nombre/ubicaciÃ³n, contraer/reabrir filtros, abrir detalle y cerrar. Contexto mÃ©dico sin cambiar selectores."
                     + "\nPASS: API real. Total=" + all.length() + "; filtrados=" + filtered.length() + "; inexistentes=" + empty.length() + "\n");
             finish(Activity.RESULT_OK, result);
         } catch (Throwable error) {
@@ -173,13 +176,13 @@ public class EducationalTestRunner extends Instrumentation {
             waitForIdleSync();
             onMain(() -> {
                 android.app.AlertDialog dialog = ((LocationPicker) activity.findViewById(fieldId)).getSelectionDialog();
-                check(dialog != null && dialog.isShowing() && dialog.getListView().isShown(), "Pulsación en " + (arrow ? "flecha" : "centro") + " abre " + activity.getString(titleId));
+                check(dialog != null && dialog.isShowing() && dialog.getListView().isShown(), "PulsaciÃ³n en " + (arrow ? "flecha" : "centro") + " abre " + activity.getString(titleId));
                 check(dialog.getListView().getCount() > 1, "Opciones reales visibles");
                 if (!arrow) {
                     dialog.getListView().performItemClick(dialog.getListView().getChildAt(1), 1, dialog.getListView().getAdapter().getItemId(1));
-                    check(((LocationPicker) activity.findViewById(fieldId)).getSelectedItemPosition() == 1, "La opción elegida se refleja en el campo");
+                    check(((LocationPicker) activity.findViewById(fieldId)).getSelectedItemPosition() == 1, "La opciÃ³n elegida se refleja en el campo");
                 } else {
-                    check(dialog.getListView().getCheckedItemPosition() == 1, "Reabrir conserva la opción seleccionada");
+                    check(dialog.getListView().getCheckedItemPosition() == 1, "Reabrir conserva la opciÃ³n seleccionada");
                     dialog.getButton(android.content.DialogInterface.BUTTON_NEGATIVE).performClick();
                 }
             });
@@ -199,6 +202,6 @@ public class EducationalTestRunner extends Instrumentation {
             if (ready.get()) return;
             Thread.sleep(100);
         }
-        throw new AssertionError("La operación de interfaz no terminó correctamente en 45 segundos");
+        throw new AssertionError("La operaciÃ³n de interfaz no terminÃ³ correctamente en 45 segundos");
     }
 }

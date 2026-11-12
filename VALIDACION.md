@@ -63,3 +63,7 @@ Las advertencias de Gradle sobre APIs obsoletas del complemento y las notas de J
 ## Rediseño médico 1.2.0 · 12/11/2026
 
 Diseño aprobado antes de implementar y desplegar. Se instalaron la app y las pruebas en Small_Phone. Regresión SODA3: PASS, incluidos los selectores, filtros plegables, tarjetas y detalle. Consulta real: 85 registros, 4 filtrados, 0 inexistentes. Compilación correcta; Lint: 0 errores y 1 advertencia sobre versión disponible de Gradle. Revisión visual con ratón y cinco nuevas capturas. [Informe UX 1.2.0](docs/pruebas/UX_V1.2.0.md) y [salida instrumentada](docs/pruebas/resultado-v1.2.0.txt).
+
+## Colores de la propuesta · 1.2.1
+
+Se corrigió el despliegue claro para usar la paleta oscura aprobada. Tema fijo en formulario, tarjetas, campos, sugerencias, selectores y detalle. Compilación correcta; Lint 0 errores, 1 advertencia de actualización de Gradle. Regresión completa y aserciones de colores: PASS. [Informe y capturas](docs/pruebas/COLORES_V1.2.1.md).

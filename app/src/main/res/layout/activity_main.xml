@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:id="@+id/root" android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="vertical" android:padding="16dp">
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:background="@color/surface" android:padding="12dp" android:layout_marginBottom="12dp">
     <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center_vertical">
         <ImageView android:layout_width="44dp" android:layout_height="44dp" android:padding="10dp" android:background="@drawable/medical_badge" android:src="@drawable/ic_blood" android:importantForAccessibility="no"/>
         <LinearLayout android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:orientation="vertical" android:paddingStart="12dp" android:paddingEnd="0dp">
@@ -8,15 +9,16 @@
         </LinearLayout>
     </LinearLayout>
     <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/subtitle" android:textSize="12sp" android:paddingTop="6dp" android:paddingBottom="10dp"/>
+    </LinearLayout>
     <LinearLayout android:id="@+id/filter_panel" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:background="@drawable/medical_card" android:padding="12dp">
         <LinearLayout android:layout_width="match_parent" android:layout_height="48dp" android:gravity="center_vertical">
             <TextView android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:text="@string/search_directory" android:textSize="16sp" android:textStyle="bold"/>
-            <Button android:id="@+id/clear" android:layout_width="wrap_content" android:layout_height="48dp" android:text="@string/clear" android:textAllCaps="false" android:textColor="@color/clinical" style="?android:attr/borderlessButtonStyle"/>
+            <Button android:id="@+id/clear" android:backgroundTint="@null" android:layout_width="wrap_content" android:layout_height="48dp" android:text="@string/clear" android:textAllCaps="false" android:textColor="@color/blood" style="?android:attr/borderlessButtonStyle"/>
         </LinearLayout>
         <TextView style="@style/FieldLabel" android:text="@string/bank_hint"/>
         <LinearLayout android:layout_width="match_parent" android:layout_height="48dp" android:background="@drawable/medical_field" android:gravity="center_vertical">
-            <AutoCompleteTextView android:id="@+id/name" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:paddingStart="12dp" android:paddingEnd="0dp" android:background="@null" android:hint="@string/bank_search_hint" android:textSize="14sp" android:inputType="textCapCharacters" android:importantForAutofill="no" android:singleLine="true" android:completionThreshold="1" android:imeOptions="actionDone"/>
-            <ImageButton android:id="@+id/choose_bank" android:layout_width="48dp" android:layout_height="48dp" android:src="@android:drawable/arrow_down_float" android:contentDescription="@string/show_banks" android:background="?android:attr/selectableItemBackgroundBorderless"/>
+            <AutoCompleteTextView android:id="@+id/name" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:paddingStart="12dp" android:paddingEnd="0dp" android:background="@null" android:hint="@string/bank_search_hint" android:textSize="14sp" android:inputType="textCapCharacters" android:importantForAutofill="no" android:singleLine="true" android:popupBackground="@drawable/medical_card" android:completionThreshold="1" android:imeOptions="actionDone"/>
+            <ImageButton android:id="@+id/choose_bank" android:layout_width="48dp" android:layout_height="48dp" android:tint="@color/ink" android:src="@android:drawable/arrow_down_float" android:contentDescription="@string/show_banks" android:background="?android:attr/selectableItemBackgroundBorderless"/>
         </LinearLayout>
         <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:baselineAligned="false">
             <LinearLayout android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:orientation="vertical" android:layout_marginEnd="4dp">
@@ -28,7 +30,7 @@
                 <co.edu.unal.reto10.LocationPicker android:id="@+id/city" style="@style/LocationField" android:contentDescription="@string/city_hint"/>
             </LinearLayout>
         </LinearLayout>
-        <Button android:id="@+id/search" android:layout_width="match_parent" android:layout_height="48dp" android:layout_marginTop="12dp" android:background="@drawable/medical_primary" android:text="@string/search" android:textAllCaps="false" android:textSize="16sp" android:textStyle="bold" android:textColor="#FFFFFF"/>
+        <Button android:id="@+id/search" android:layout_width="match_parent" android:layout_height="48dp" android:layout_marginTop="12dp" android:background="@drawable/medical_primary" android:text="@string/search" android:textAllCaps="false" android:textSize="16sp" android:textStyle="bold" android:textColor="@color/primary_on"/>
     </LinearLayout>
     <Button android:id="@+id/filter_toggle" android:layout_width="match_parent" android:layout_height="48dp" android:layout_marginTop="4dp" android:background="@drawable/medical_field" android:textColor="@color/clinical" android:textAllCaps="false" android:visibility="gone" android:text="@string/edit_filters"/>
     <ProgressBar android:id="@+id/progress" style="?android:attr/progressBarStyleHorizontal" android:layout_width="match_parent" android:layout_height="4dp" android:indeterminate="true" android:visibility="gone"/>
